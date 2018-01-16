@@ -1,1 +1,1 @@
-# PyTrade
+# PyAlgo
