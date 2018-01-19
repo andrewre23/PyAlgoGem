@@ -3,7 +3,6 @@
 # data/data_gathering
 #
 #
-#
 # Andrew Edmonds - 2018
 #
 
