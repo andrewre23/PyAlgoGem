@@ -11,7 +11,7 @@ import sys
 import shutil
 
 
-def initialize_dataset_directory(path=None, folder=None, over_write=False):
+def initialize_data_directory(path=None, folder=None, over_write=False):
     # Function to create local directory
     # to store data files for prices
     #
