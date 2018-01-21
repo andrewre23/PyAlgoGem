@@ -21,13 +21,13 @@ def initialize_data_directory(path=None, folder=None, over_write=False):
     if path is None:
         dir_path = os.getcwd()
     else:
-        dir_path = path
+        dir_path = str(path)
 
     # determine folder name
     if folder is None:
         dir_name = 'datasets'
     else:
-        dir_name = folder
+        dir_name = str(folder)
 
     # determine spacing based on OS
     if 'win' in sys.platform.lower():
@@ -43,7 +43,10 @@ def initialize_data_directory(path=None, folder=None, over_write=False):
             shutil.rmtree(dir)
             os.makedirs(dir)
     else:
-        os.makedirs(dir)
+        try:
+            os.makedirs(dir)
+        except OSError:
+            print("Error creating directory.")
 
     # return location of data directory
     return dir
