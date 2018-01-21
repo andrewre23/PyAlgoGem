@@ -1,19 +1,20 @@
 # PyAlgoGem
 
-Wrapper class for Gemini exchange for Cryptocurrencies (BTC & ETH).
+## Wrapper class for Gemini exchange for Cryptocurrencies (BTC & ETH).
 
-Data:
+
+### Data:
 
 Store and read locally saved price data.
 
-Backtest:
+### Backtest:
 
 Backtest strategies on historical data.
 
-Deployment:
+### Deployment:
 
 Deploy strategies to real-time trading.
 
-Performance:
+### Performance:
 
 Monitor performance of an algorithm as it is live-traded.
