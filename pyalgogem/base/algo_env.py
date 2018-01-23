@@ -38,7 +38,7 @@ class algorithm_environment(object):
             self.url = 'https://api.gemini.com/v1/'
         self.debug = debug
 
-    def setup_datastorage(self, path=None, folder=None, over_write=False):
+    def setup_datastorage(path=None, folder=None, over_write=False):
         """
         Run to ensure data storage location is ready, and return path of store
         """
