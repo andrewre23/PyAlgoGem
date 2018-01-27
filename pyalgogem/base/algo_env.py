@@ -6,7 +6,6 @@
 # Andrew Edmonds - 2018
 #
 
-from ..data import initialize_data_directory
 
 
 class algorithm_environment(object):
@@ -37,9 +36,8 @@ class algorithm_environment(object):
         else:
             self.url = 'https://api.gemini.com/v1/'
         self.debug = debug
+        self.filename = 'data.h5'
 
-    def setup_datastorage(path=None, folder=None, over_write=False):
-        """
-        Run to ensure data storage location is ready, and return path of store
-        """
-        return initialize_data_directory(path, folder, over_write)
+
+    def initialize_data(self, name=None):
+        self.filename = self.create_datafile(name)

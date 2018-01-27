@@ -6,4 +6,4 @@
 # Andrew Edmonds - 2018
 #
 
-from .data_gathering import *
+from .storage import create_datafile
