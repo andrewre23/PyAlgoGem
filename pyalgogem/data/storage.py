@@ -6,6 +6,8 @@
 # Andrew Edmonds - 2018
 #
 
+import os
+import shutil
 import tables as tb
 import tstables as ts
 
@@ -25,8 +27,27 @@ class CoinTable(tb.IsDescription):
 
 
 def create_datafile(name='data.h5'):
-    h5 = tb.open_file(name, 'w')
-    h5.create_ts('/', 'BTC', CoinTable)
-    h5.create_ts('/', 'ETH', CoinTable)
-    h5.close()
+    name = str(name)
+    if not os.path.isfile(name):
+        h5 = tb.open_file(name, 'w')
+        h5.create_ts('/', 'BTC', CoinTable)
+        h5.create_ts('/', 'ETH', CoinTable)
+        h5.close()
     return name
+
+
+def copy_file(source, copy):
+    source = str(source)
+    copy = str(copy)
+    try:
+        shutil.copy(source, copy)
+    except OSError:
+        print('Error copying {}'.format(source))
+
+
+def remove_file(name):
+    name = str(name)
+    try:
+        os.remove(name)
+    except OSError:
+        print('Error deleting {}'.format(name))
