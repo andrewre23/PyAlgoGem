@@ -6,9 +6,11 @@
 # Andrew Edmonds - 2018
 #
 
+import os
+from ..data import create_datafile
 
 
-class algorithm_environment(object):
+class AlgorithmEnvironment(object):
     """
     Main class for Gemini wrapper and interactive tool
 
@@ -38,6 +40,8 @@ class algorithm_environment(object):
         self.debug = debug
         self.filename = 'data.h5'
 
+        if not os.path.isfile(self.filename):
+            self.initialize_data()
 
-    def initialize_data(self, name=None):
-        self.filename = self.create_datafile(name)
+    def initialize_data(self, name='data.h5'):
+        self.filename = create_datafile(name)
