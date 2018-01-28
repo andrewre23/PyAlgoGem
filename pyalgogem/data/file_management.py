@@ -1,7 +1,8 @@
 #
 # PyAlgo Project
-# data/storage
+# data/file_management
 #
+# functions to manage HDF5 files
 #
 # Andrew Edmonds - 2018
 #
@@ -11,8 +12,10 @@ import shutil
 import tables as tb
 import tstables as ts
 
+from .data_helpers import ensure_datetime, ensure_hdf5
 
-class CoinTable(tb.IsDescription):
+
+class CryptoCompareTable(tb.IsDescription):
     """
     Description of table to be used in HDF5 file
     Same structure for BTC and ETH
@@ -27,26 +30,29 @@ class CoinTable(tb.IsDescription):
 
 
 def create_datafile(name='data.h5'):
-    name = str(name)
+    """Create HDF5 file for data storage"""
+    name = ensure_hdf5(str(name))
     if not os.path.isfile(name):
         h5 = tb.open_file(name, 'w')
-        h5.create_ts('/', 'BTC', CoinTable)
-        h5.create_ts('/', 'ETH', CoinTable)
+        h5.create_ts('/', 'BTC', CryptoCompareTable)
+        h5.create_ts('/', 'ETH', CryptoCompareTable)
         h5.close()
     return name
 
 
-def copy_file(source, copy):
-    source = str(source)
-    copy = str(copy)
+def copy_datafile(source, copy):
+    """Duplicate HDF5 files"""
+    source = ensure_hdf5(str(source))
+    copy = ensure_hdf5(str(copy))
     try:
         shutil.copy(source, copy)
     except OSError:
         print('Error copying {}'.format(source))
 
 
-def remove_file(name):
-    name = str(name)
+def remove_datafile(name):
+    """Delete HDF5 file"""
+    name = ensure_hdf5(str(name))
     try:
         os.remove(name)
     except OSError:

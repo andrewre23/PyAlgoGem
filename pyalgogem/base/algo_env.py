@@ -18,7 +18,7 @@ class AlgorithmEnvironment(object):
 
     """
 
-    def __init__(self, key, secret_key, sandbox=True, debug=False):
+    def __init__(self, key=None, secret_key=None, sandbox=True, debug=False):
         """
         Creates algorithm_environment object (ae)
 
@@ -48,6 +48,8 @@ class AlgorithmEnvironment(object):
         self.performance = performance
 
         # set parametric values
+        if key is None or secret_key is None:
+            raise ValueError('Please enter proper API keys')
         self.key = key
         self.secret_key = secret_key
         if sandbox:
