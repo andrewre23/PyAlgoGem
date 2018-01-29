@@ -15,10 +15,10 @@ from ._data_helpers import ensure_datetime, ensure_hdf5
 
 def append_to_datafile(symbol, data, file='data.h5'):
     """Append data (DataFrame) to HDF5 file"""
+    if symbol.upper() not in ['BTC', 'ETH']:
+        raise ValueError('Symbol must be BTC or ETH')
+    file = ensure_hdf5(str(file))
     try:
-        if symbol.upper() not in ['BTC', 'ETH']:
-            raise ValueError('Symbol must be BTC or ETH')
-        file = ensure_hdf5(str(file))
         f = tb.open_file(file, 'a')
         if symbol.upper() == 'BTC':
             tseries = f.root.BTC._f_get_timeseries()
@@ -55,3 +55,21 @@ def read_datafile(symbol, start, end, file='data.h5'):
         return dataset
     except:
         print("Error reading from to {}".format(file))
+
+
+def get_minmax_daterange(symbol, file='data.h5'):
+    """Get min and max of timeseries on HDF5 file"""
+    if symbol.upper() not in ['BTC', 'ETH']:
+        raise ValueError('Symbol must be BTC or ETH')
+    file = ensure_hdf5(str(file))
+    try:
+        f = tb.open_file(file, 'r')
+        if symbol.upper() == 'BTC':
+            ts = f.root.BTC._f_get_timeseries()
+        else:
+            ts = f.root.ETH._f_get_timeseries()
+        min_date, max_date = ts.min_dt(), ts.max_dt()
+        f.close()
+        return min_date, max_date
+    except:
+        print("Error getting min-max dates from to {}".format(file))
