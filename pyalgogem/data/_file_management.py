@@ -12,7 +12,7 @@ import shutil
 import tables as tb
 import tstables as ts
 
-from ._data_helpers import ensure_datetime, ensure_hdf5
+from ._data_helpers import ensure_hdf5
 
 
 class CryptoCompareTable(tb.IsDescription):
@@ -30,7 +30,8 @@ class CryptoCompareTable(tb.IsDescription):
 
 
 def create_datafile(name='data.h5'):
-    """Create HDF5 file for data storage"""
+    """Create HDF5 file for data storage
+    of BTC and ETH timeseries"""
     name = ensure_hdf5(str(name))
     if not os.path.isfile(name):
         h5 = tb.open_file(name, 'w')
@@ -40,8 +41,10 @@ def create_datafile(name='data.h5'):
     return name
 
 
-def copy_datafile(source, copy):
+def copy_datafile(source=None, copy=None):
     """Duplicate HDF5 files"""
+    if source is None or copy is None:
+        raise ValueError('Error: Please choose valid files')
     source = ensure_hdf5(str(source))
     copy = ensure_hdf5(str(copy))
     try:
@@ -50,8 +53,10 @@ def copy_datafile(source, copy):
         print('Error copying {}'.format(source))
 
 
-def remove_datafile(name):
+def remove_datafile(name=None):
     """Delete HDF5 file"""
+    if name is None:
+        raise ValueError('Error: No file given')
     name = ensure_hdf5(str(name))
     try:
         os.remove(name)
