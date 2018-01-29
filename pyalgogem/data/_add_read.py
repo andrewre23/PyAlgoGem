@@ -10,7 +10,7 @@
 import tables as tb
 import tstables as ts
 
-from .data_helpers import ensure_datetime, ensure_hdf5
+from ._data_helpers import ensure_datetime, ensure_hdf5
 
 
 def append_to_datafile(symbol, data, file='data.h5'):
