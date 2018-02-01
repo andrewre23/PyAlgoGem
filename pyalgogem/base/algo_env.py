@@ -2,6 +2,7 @@
 # PyAlgo Project
 # base/
 #
+# main module containing AlgorithmEnvironment object
 #
 # Andrew Edmonds - 2018
 #
@@ -10,6 +11,8 @@ import pyalgogem.data as data
 import pyalgogem.backtest as backtest
 import pyalgogem.deployment as deployment
 import pyalgogem.performance as performance
+
+from pyalgogem.data import CryptoCompareAPI
 
 
 class AlgorithmEnvironment(object):
@@ -46,6 +49,9 @@ class AlgorithmEnvironment(object):
         self.backtest = backtest
         self.deployment = deployment
         self.performance = performance
+
+        # link APIs for easy storage
+        self.cryptocompare = CryptoCompareAPI()
 
         # set parametric values
         if key is None or secret_key is None:

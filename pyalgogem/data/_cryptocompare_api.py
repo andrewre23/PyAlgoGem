@@ -6,3 +6,10 @@
 #
 # Andrew Edmonds - 2018
 #
+
+class CryptoCompareAPI(object):
+    """Object for housing data retrieval
+    functions with CryptoCompare site
+    """
+    def get_historical_data(self):
+        pass
