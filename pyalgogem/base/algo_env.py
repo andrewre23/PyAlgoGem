@@ -38,6 +38,8 @@ class AlgorithmEnvironment(object):
         ==========
         filename: str
             name of datafile to be used by environment
+            on update: creates new HDF5 file in CWD
+                with same name
         instrument: str
             name of instrument to be used - must be BTC or ETH
 
@@ -46,28 +48,38 @@ class AlgorithmEnvironment(object):
         # set parametric values
         if key is None or secret_key is None:
             raise ValueError('Please enter proper API keys')
-        self.key = key
-        self.secret_key = secret_key
+        self.__key = key
+        self.__secret_key = secret_key
         if sandbox:
-            self.url = 'https://api.sandbox.gemini.com/v1/'
+            self.__url = 'https://api.sandbox.gemini.com/v1/'
         else:
-            self.url = 'https://api.gemini.com/v1/'
-        self.debug = debug
+            self.__url = 'https://api.gemini.com/v1/'
+        self.__debug = debug
 
         # set initial attributes
-        self.filename = 'data.h5'
+        self.file = 'data.h5'
         self.instrument = None
 
-        # create datafile if none exists
-        data.create_datafile(self.filename)
+    @property
+    def instrument(self):
+        """Name of data file to read/write from"""
+        return self.__instrument
 
-    def set_instrument(self, instrument):
-        """Update instrument to be used in algorithm"""
-        if instrument.upper() not in ['BTC', 'ETH']:
+    @instrument.setter
+    def instrument(self, new_instrument):
+        """Instrument to be used in algorithm"""
+        if new_instrument is None:
+            self.__instrument = None
+        elif new_instrument.upper() not in [None, 'BTC', 'ETH']:
             raise ValueError("Instrument must be BTC or ETH")
         else:
-            self.instrument = instrument.upper()
+            self.__instrument = new_instrument.upper()
 
-    def set_datafile(self, filename):
-        filename = str(filename)
-        self.filename = data.create_datafile(filename)
+    @property
+    def file(self):
+        """Name of data file to read/write from"""
+        return self.__file
+
+    @file.setter
+    def file(self, new_file):
+        self.__file = data.create_datafile(str(new_file))
