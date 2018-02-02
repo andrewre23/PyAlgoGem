@@ -11,16 +11,26 @@ import requests
 import datetime as dt
 import pandas as pd
 
+URL_BASE = 'https://min-api.cryptocompare.com/data/'
+
 
 class CryptoCompareAPI(object):
     """Object for housing data retrieval
     functions with CryptoCompare site
     """
 
-    URL_BASE = 'https://min-api.cryptocompare.com/data/'
-
     def current_price(symbol, comparison_symbols=['USD'], exchange='Gemini'):
-        """Retrieve current price of currencies"""
+        """Get the price of a currency against multiple currencies
+
+        Parameters
+        ==========
+        symbol : str
+            name of desired currency
+        comparison_symbols : list
+            reference currencies
+        exchange : str
+            name of exchange to source from
+        """
         url = URL_BASE + 'price?fsym={}&tsyms={}' \
             .format(symbol.upper(), ','.join(comparison_symbols).upper())
         if exchange:
@@ -29,9 +39,55 @@ class CryptoCompareAPI(object):
         data = page.json()
         return data
 
+    def historical_price(symbol, ts, comparison_symbols=['USD'], exchange='Gemini'):
+        """Get the price of a currency against multiple currencies at any
+        given timestamp
+
+        Parameters
+        ==========
+        symbol : str
+            name of desired currency
+        ts : timeseries
+            specific instance to retrieve price from
+        comparison_symbols : list
+            reference currencies
+        exchange : str
+            name of exchange to source from
+        """
+        url = URL_BASE + 'pricehistorical?fsym={}&tsyms={}' \
+            .format(symbol.upper(), ','.join(comparison_symbols).upper())
+        if ts is not None and isinstance(ts, dt.datetime):
+            url += {'ts'.format(ts)}
+        if exchange:
+            url += '&e={}'.format(exchange)
+        page = requests.get(url)
+        data = page.json()
+        return data
+
     def historical_price_daily(symbol, comparison_symbol='USD', all_data=True, \
                                limit=1, aggregate=1, exchange='Gemini'):
-        """Retrieve historical prices by day"""
+        """Retrieve Daily OHLC prices, and to/from volume
+        -values based on 00:00:00 GMT time
+
+        Parameters
+        ==========
+        symbol : str
+            name of desired currency
+        comparison_symbol : str
+            reference currency
+        all_data : bool
+            get all the available data (default True)
+        limit : int
+            limit number of days retrieved
+            -default : 30
+            -max : 2000
+        aggregate : int
+            grouped into number of days
+            -default : 1
+            -max : 30
+        exchange : str
+            name of exchange to source from
+        """
         url = URL_BASE + 'histoday?fsym={}&tsym={}&limit={}&aggregate={}' \
             .format(symbol.upper(), comparison_symbol.upper(), limit, aggregate)
         if exchange:
@@ -46,7 +102,26 @@ class CryptoCompareAPI(object):
 
     def historical_price_hourly(symbol, comparison_symbol='USD', limit=1, \
                                 aggregate=1, exchange='Gemini'):
-        """Retrieve historical prices by hour"""
+        """Retrieve Hourly OHLC prices, and to/from volume
+        -values based on 00:00:00 GMT time
+
+        Parameters
+        ==========
+        symbol : str
+            name of desired currency
+        comparison_symbol : str
+            reference currency
+        limit : int
+            limit number of days retrieved
+            -default : 168
+            -max : 2000
+        aggregate : int
+            grouped into number of days
+            -default : 1
+            -max : None
+        exchange : str
+            name of exchange to source from
+        """
         url = URL_BASE + 'histohour?fsym={}&tsym={}&limit={}&aggregate={}' \
             .format(symbol.upper(), comparison_symbol.upper(), limit, aggregate)
         if exchange:
@@ -59,7 +134,26 @@ class CryptoCompareAPI(object):
 
     def historical_price_minute(symbol, comparison_symbol='USD', limit=1, \
                                 aggregate=1, exchange='Gemini'):
-        """Retrieve historical prices by hour"""
+        """Retrieve Minute OHLC prices, and to/from volume
+        -values based on 00:00:00 GMT time
+
+        Parameters
+        ==========
+        symbol : str
+            name of desired currency
+        comparison_symbol : str
+            reference currency
+        limit : int
+            limit number of days retrieved
+            -default : 1440
+            -max : 2000
+        aggregate : int
+            grouped into number of days
+            -default : 1
+            -max : None
+        exchange : str
+            name of exchange to source from
+        """
         url = URL_BASE + 'histominute?fsym={}&tsym={}&limit={}&aggregate={}' \
             .format(symbol.upper(), comparison_symbol.upper(), limit, aggregate)
         if exchange:
