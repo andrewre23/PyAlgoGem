@@ -12,8 +12,6 @@ import pyalgogem.backtest as backtest
 import pyalgogem.deployment as deployment
 import pyalgogem.performance as performance
 
-from pyalgogem.data import CryptoCompareAPI
-
 
 class AlgorithmEnvironment(object):
     """
@@ -44,14 +42,6 @@ class AlgorithmEnvironment(object):
             name of instrument to be used - must be BTC or ETH
 
         """
-        # add pathways to other subfolders
-        self.data = data
-        self.backtest = backtest
-        self.deployment = deployment
-        self.performance = performance
-
-        # link APIs for easy storage
-        self.cryptocompare = CryptoCompareAPI()
 
         # set parametric values
         if key is None or secret_key is None:
@@ -69,7 +59,7 @@ class AlgorithmEnvironment(object):
         self.instrument = None
 
         # create datafile if none exists
-        self.data.create_datafile(self.filename)
+        data.create_datafile(self.filename)
 
     def set_instrument(self, instrument):
         """Update instrument to be used in algorithm"""
@@ -80,4 +70,4 @@ class AlgorithmEnvironment(object):
 
     def set_datafile(self, filename):
         filename = str(filename)
-        self.filename = self.data.create_datafile(filename)
+        self.filename = data.create_datafile(filename)
