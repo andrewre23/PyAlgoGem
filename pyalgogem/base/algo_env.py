@@ -15,8 +15,8 @@ import pyalgogem.performance as performance
 
 class AlgorithmEnvironment(object):
     """
-    Main class for Gemini wrapper and interactive tool
-
+    Wrapper class object for Algorithmic Trading of Cryptocurrencies
+    Using the CryptoCompare API, HDFS, Sci-kit Learn, and Gemini exchange
     """
 
     def __init__(self, key=None, secret_key=None, sandbox=True, debug=False):
@@ -83,4 +83,5 @@ class AlgorithmEnvironment(object):
     @file.setter
     def file(self, new_file):
         self.__file = data.create_datafile(str(new_file))
+
 
