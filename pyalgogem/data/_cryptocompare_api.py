@@ -11,13 +11,13 @@ import requests
 import datetime as dt
 import pandas as pd
 
-URL_BASE = 'https://min-api.cryptocompare.com/data/'
-
 
 class CryptoCompareAPI(object):
     """Object for housing data retrieval
     functions with CryptoCompare site
     """
+
+    URL_BASE = 'https://min-api.cryptocompare.com/data/'
 
     def current_price(symbol, comparison_symbols=['USD'], exchange='Gemini'):
         """Retrieve current price of currencies"""
