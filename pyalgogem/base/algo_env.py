@@ -60,6 +60,10 @@ class AlgorithmEnvironment(object):
         self.file = 'data.h5'
         self.instrument = None
 
+        # create API objects for Cryptocompare and Gemini
+        self.CC = data.CryptoCompareAPI()
+        self.GEMINI = data.GeminiAPI(self.__key, self.__secret_key)
+
     @property
     def instrument(self):
         """Name of data file to read/write from"""
