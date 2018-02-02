@@ -15,8 +15,9 @@ URL_BASE = 'https://min-api.cryptocompare.com/data/'
 
 
 class CryptoCompareAPI(object):
-    """Object for housing data retrieval
-    functions with CryptoCompare site
+    """
+    Wrapper class object for Retrieval of Price Data
+    For Cryptocurrencies Using the CryptoCompare API
     """
 
     def current_price(symbol, comparison_symbols=['USD'], exchange='Gemini'):

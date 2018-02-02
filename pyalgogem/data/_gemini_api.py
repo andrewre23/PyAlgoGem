@@ -6,3 +6,6 @@
 #
 # Andrew Edmonds - 2018
 #
+
+
+class GeminiAPI(object):
