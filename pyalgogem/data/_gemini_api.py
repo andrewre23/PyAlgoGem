@@ -9,3 +9,10 @@
 
 
 class GeminiAPI(object):
+    """
+    Wrapper class object for Retrieval of Price Data
+    For Cryptocurrencies Using the CryptoCompare API
+    """
+
+    def __init__(self, key, private_key):
+        pass
