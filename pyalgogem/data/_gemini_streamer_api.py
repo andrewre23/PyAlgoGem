@@ -16,3 +16,6 @@ class GeminiStreamAPI(object):
 
     def __init__(self, key, private_key):
         pass
+
+    def tester(self):
+        print('test','3, 4')

@@ -16,3 +16,6 @@ class GeminiAPI(object):
 
     def __init__(self, key, private_key):
         pass
+
+    def tester(self):
+        print('test','1, 2')

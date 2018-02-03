@@ -87,7 +87,10 @@ class AlgorithmEnvironment(object):
 
     @file.setter
     def file(self, new_file):
-        self.__file = data.create_datafile(str(new_file))
+        if not new_file is None:
+            self.__file = data.create_datafile(str(new_file))
+        else:
+            raise ValueError('Enter a valid name for data file.')
 
     def update_data(self):
         """
