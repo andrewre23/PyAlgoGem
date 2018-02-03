@@ -20,7 +20,7 @@ class CryptoCompareAPI(object):
     For Cryptocurrencies Using the CryptoCompare API
     """
 
-    def current_price(symbol, comparison_symbols=['USD'], exchange='Gemini'):
+    def current_price(self, symbol, comparison_symbols=['USD'], exchange='Gemini'):
         """Get the price of a currency against multiple currencies
 
         Parameters
@@ -40,7 +40,7 @@ class CryptoCompareAPI(object):
         data = page.json()
         return data
 
-    def historical_price(symbol, ts, comparison_symbols=['USD'], exchange='Gemini'):
+    def historical_price(self, symbol, ts, comparison_symbols=['USD'], exchange='Gemini'):
         """Get the price of a currency against multiple currencies at any
         given timestamp
 
@@ -65,7 +65,7 @@ class CryptoCompareAPI(object):
         data = page.json()
         return data
 
-    def historical_price_daily(symbol, comparison_symbol='USD', all_data=True, \
+    def historical_price_daily(self, symbol, comparison_symbol='USD', all_data=True, \
                                limit=1, aggregate=1, exchange='Gemini'):
         """Retrieve Daily OHLC prices, and to/from volume
         -values based on 00:00:00 GMT time
@@ -101,7 +101,7 @@ class CryptoCompareAPI(object):
         df = df.drop('time', axis=1)
         return df
 
-    def historical_price_hourly(symbol, comparison_symbol='USD', limit=1, \
+    def historical_price_hourly(self, symbol, comparison_symbol='USD', limit=1, \
                                 aggregate=1, exchange='Gemini'):
         """Retrieve Hourly OHLC prices, and to/from volume
         -values based on 00:00:00 GMT time
@@ -133,7 +133,7 @@ class CryptoCompareAPI(object):
         df = df.drop('time', axis=1)
         return df
 
-    def historical_price_minute(symbol, comparison_symbol='USD', limit=1, \
+    def historical_price_minute(self, symbol, comparison_symbol='USD', limit=1, \
                                 aggregate=1, exchange='Gemini'):
         """Retrieve Minute OHLC prices, and to/from volume
         -values based on 00:00:00 GMT time
