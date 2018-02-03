@@ -35,8 +35,9 @@ def create_datafile(name='data.h5'):
     name = ensure_hdf5(str(name))
     if not os.path.isfile(name):
         h5 = tb.open_file(name, 'w')
-        h5.create_ts('/', 'BTC', CryptoCompareTable)
-        h5.create_ts('/', 'ETH', CryptoCompareTable)
+        for window in ['D','H','M']:
+            h5.create_ts('/', 'BTC{}'.format(window), CryptoCompareTable)
+            h5.create_ts('/', 'ETH{}'.format(window), CryptoCompareTable)
         h5.close()
     return name
 
