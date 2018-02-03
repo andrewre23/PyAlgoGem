@@ -7,6 +7,7 @@
 # Andrew Edmonds - 2018
 #
 
+import pandas as pd
 import tables as tb
 import tstables as ts
 
@@ -17,6 +18,8 @@ def append_to_datafile(symbol, data, file='data.h5'):
     """Append data (DataFrame) to HDF5 file"""
     if symbol.upper() not in ['BTC', 'ETH']:
         raise ValueError('Symbol must be BTC or ETH')
+    if not isinstance(data, pd.DataFrame):
+        raise ValueError('Data must be Pandas DataFrame')
     file = ensure_hdf5(str(file))
     try:
         f = tb.open_file(file, 'a')
