@@ -31,15 +31,17 @@ def append_to_datafile(symbol, data, file='data.h5'):
         print("Error appending to {}".format(file))
 
 
-def read_datafile(symbol, start, end, file='data.h5'):
+def read_datafile(symbol, start=None, end=None, file='data.h5',all_data=True):
     """Read historical data from HDF5 file
     into in-memory DataFrame"""
     # ensure datetime parameters are valid
-    if not (ensure_datetime(start) | ensure_datetime(end)):
-        raise ValueError('Must pass valid datetime arguments')
-    # ensure start is prior to end
-    if (start - end).total_seconds() >= 0:
-        raise ValueError('Start time must be prior to end time')
+    # unless requesting all available data
+    if not all_data:
+        if not (ensure_datetime(start) | ensure_datetime(end)):
+            raise ValueError('Must pass valid datetime arguments')
+        # ensure start is prior to end
+        if (start - end).total_seconds() >= 0:
+            raise ValueError('Start time must be prior to end time')
     if symbol.upper() not in ['BTC', 'ETH']:
         raise ValueError('Symbol must be BTC or ETH')
     file = ensure_hdf5(str(file))
@@ -50,6 +52,8 @@ def read_datafile(symbol, start, end, file='data.h5'):
             ts = f.root.BTC._f_get_timeseries()
         else:
             ts = f.root.ETH._f_get_timeseries()
+        if all_data:
+            start, end = get_minmax_daterange(symbol,file=file)
         dataset = ts.read_range(start, end)
         f.close()
         return dataset
