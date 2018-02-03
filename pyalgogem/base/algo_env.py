@@ -63,6 +63,7 @@ class AlgorithmEnvironment(object):
         # create API objects for Cryptocompare and Gemini
         self.CC = data.CryptoCompareAPI()
         self.GEMINI = data.GeminiAPI(self.__key, self.__secret_key)
+        self.GSTREAM = data.GeminiStreamAPI(self.__key, self.__secret_key)
 
     @property
     def instrument(self):
@@ -88,4 +89,10 @@ class AlgorithmEnvironment(object):
     def file(self, new_file):
         self.__file = data.create_datafile(str(new_file))
 
-
+    def update_data(self):
+        """
+        Retrieve all possible available data (D-M-H)
+        from CryptoCompare and append missing values
+        to currently-selected data-file
+        """
+        pass
