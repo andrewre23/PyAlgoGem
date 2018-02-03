@@ -7,6 +7,8 @@
 # Andrew Edmonds - 2018
 #
 
+import pandas as pd
+
 import pyalgogem.data as data
 import pyalgogem.backtest as backtest
 import pyalgogem.deployment as deployment
@@ -59,6 +61,9 @@ class AlgorithmEnvironment(object):
         # set initial attributes
         self.file = 'data.h5'
         self.instrument = None
+        self.data_raw = None
+        self.data_sample = None
+        self.window = None
 
         # create API objects for Cryptocompare and Gemini
         self.CC = data.CryptoCompareAPI()
@@ -92,10 +97,57 @@ class AlgorithmEnvironment(object):
         else:
             raise ValueError('Enter a valid name for data file.')
 
+    @property
+    def data_raw(self):
+        """Raw retrieval of data from dataset"""
+        return self.__data_raw
+
+    @data_raw.setter
+    def data_raw(self, new_data_raw):
+        """Raw retrieval of data from dataset"""
+        if new_data_raw is None or \
+                isinstance(new_data_raw, pd.DataFrame):
+            self.__data_raw = new_data_raw
+        else:
+            raise ValueError('Must be Pandas DataFrame object')
+
+    @property
+    def data_sample(self):
+        """In-Sample data to use for training and backtesting"""
+        return self.__data_sample
+
+    @data_sample.setter
+    def data_sample(self, new_data_sample):
+        """In-Sample data to use for training and backtesting"""
+        if new_data_sample is None or \
+                isinstance(new_data_sample, pd.DataFrame):
+            self.__data_sample = new_data_sample
+        else:
+            raise ValueError('Must be Pandas DataFrame object')
+
+    @property
+    def window(self):
+        """Time window to use when selecting sample data"""
+        return self.__window
+
+    @window.setter
+    def window(self, new_window):
+        if new_window is None:
+            self.__window = None
+        elif new_window.upper() in ['D', 'H', 'M']:
+            self.__window = new_window.upper()
+        else:
+            raise ValueError("Time window must be: 'D', 'H', 'M'")
+
     def update_data(self):
         """
         Retrieve all possible available data (D-M-H)
         from CryptoCompare and append missing values
         to currently-selected data-file
         """
+
+        # retrieve all data
+
+        # retrieve daily data
         pass
+        # for symbol in ['BTC','ETH']:
