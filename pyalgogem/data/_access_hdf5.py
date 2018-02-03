@@ -34,7 +34,7 @@ def append_to_datafile(symbol, data, file='data.h5'):
         print("Error appending to {}".format(file))
 
 
-def read_datafile(symbol, start=None, end=None, file='data.h5',all_data=True):
+def read_datafile(symbol, start=None, end=None, file='data.h5', all_data=True):
     """Read historical data from HDF5 file
     into in-memory DataFrame"""
     # ensure datetime parameters are valid
@@ -56,7 +56,7 @@ def read_datafile(symbol, start=None, end=None, file='data.h5',all_data=True):
         else:
             ts = f.root.ETH._f_get_timeseries()
         if all_data:
-            start, end = get_minmax_daterange(symbol,file=file)
+            start, end = get_minmax_daterange(symbol, file=file)
         dataset = ts.read_range(start, end)
         f.close()
         return dataset
