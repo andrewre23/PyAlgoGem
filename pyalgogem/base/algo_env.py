@@ -7,12 +7,13 @@
 # Andrew Edmonds - 2018
 #
 
-import pandas as pd
 
 import pyalgogem.data as data
 import pyalgogem.backtest as backtest
 import pyalgogem.deployment as deployment
 import pyalgogem.performance as performance
+
+from pandas import DataFrame
 
 
 class AlgorithmEnvironment(object):
@@ -120,7 +121,7 @@ class AlgorithmEnvironment(object):
     def data_raw(self, new_data_raw):
         """Raw retrieval of data from dataset"""
         if new_data_raw is None or \
-                isinstance(new_data_raw, pd.DataFrame):
+                isinstance(new_data_raw, DataFrame):
             self.__data_raw = new_data_raw
         else:
             raise ValueError('Must be Pandas DataFrame object')
@@ -134,7 +135,7 @@ class AlgorithmEnvironment(object):
     def data_sample(self, new_data_sample):
         """In-Sample data to use for training and backtesting"""
         if new_data_sample is None or \
-                isinstance(new_data_sample, pd.DataFrame):
+                isinstance(new_data_sample, DataFrame):
             self.__data_sample = new_data_sample
         else:
             raise ValueError('Must be Pandas DataFrame object')
@@ -150,15 +151,19 @@ class AlgorithmEnvironment(object):
         if self.window is None:
             raise ValueError('Must select valid window (D/M/H)')
         if self.window == 'D':
-            df = self.CC.historical_price_daily(self.instrument)
+            hist_df = self.CC.historical_price_daily(self.instrument)
         elif self.window == 'H':
-            df = self.CC.historical_price_daily(self.instrument)
+            hist_df = self.CC.historical_price_hourly(self.instrument)
         elif self.window == 'M':
-            df = self.CC.historical_price_daily(self.instrument)
+            hist_df = self.CC.historical_price_minute(self.instrument)
         old_min, old_max = data.get_minmax_daterange(self.instrument, self.file)
-        new_min, new_max = df.index.min(), df.index.max()
-        # if no old min/max, then append everything
+        new_min, new_max = hist_df.index.min(), hist_df.index.max()
+        # empty file - if no old min/max, then append everything
         if old_min is None or old_max is None:
-            data.append_to_datafile(self.instrument, df, self.file)
+            data.append_to_datafile(self.instrument, hist_df, self.file)
+        # duplicates - if new range within old range, do nothing
+        if old_min > new_min and old_max < new_max:
+            return
+
         # if yes, then choose range between new min/max
         # that is not within range of old min/max already
