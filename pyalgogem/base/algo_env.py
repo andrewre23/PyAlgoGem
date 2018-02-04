@@ -157,13 +157,9 @@ class AlgorithmEnvironment(object):
         elif self.window == 'M':
             hist_df = self.CC.historical_price_minute(self.instrument)
         old_min, old_max = data.get_minmax_daterange(self.instrument, self.file)
-        new_min, new_max = hist_df.index.min(), hist_df.index.max()
-        # empty file - if no old min/max, then append everything
-        if old_min is None or old_max is None:
-            data.append_to_datafile(self.instrument, hist_df, self.file)
-        # duplicates - if new range within old range, do nothing
-        if old_min < new_min and old_max > new_max:
-            return
-
-        # if yes, then choose range between new min/max
-        # that is not within range of old min/max already
+        # select subset of data that isn't within range of old min/max
+        new_df = data.select_new_values(hist_df, old_min, old_max)
+        # as long as there is new data to add, add to datafile
+        if new_df is not None:
+            data.append_to_datafile(new_df)
+        print('All available historical data has been successfully loaded')
