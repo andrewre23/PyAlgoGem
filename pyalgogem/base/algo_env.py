@@ -61,14 +61,26 @@ class AlgorithmEnvironment(object):
         # set initial attributes
         self.file = 'data.h5'
         self.instrument = None
+        self.window = None
         self.data_raw = None
         self.data_sample = None
-        self.window = None
 
         # create API objects for Cryptocompare and Gemini
         self.CC = data.CryptoCompareAPI()
         self.GEMINI = data.GeminiAPI(self.__key, self.__secret_key)
         self.GSTREAM = data.GeminiStreamAPI(self.__key, self.__secret_key)
+
+    @property
+    def file(self):
+        """Name of data file to read/write from"""
+        return self.__file
+
+    @file.setter
+    def file(self, new_file):
+        if new_file is not None:
+            self.__file = data.create_datafile(str(new_file))
+        else:
+            raise ValueError('Enter a valid name for data file.')
 
     @property
     def instrument(self):
@@ -86,16 +98,18 @@ class AlgorithmEnvironment(object):
             self.__instrument = new_instrument.upper()
 
     @property
-    def file(self):
-        """Name of data file to read/write from"""
-        return self.__file
+    def window(self):
+        """Time window to use when selecting sample data"""
+        return self.__window
 
-    @file.setter
-    def file(self, new_file):
-        if not new_file is None:
-            self.__file = data.create_datafile(str(new_file))
+    @window.setter
+    def window(self, new_window):
+        if new_window is None:
+            self.__window = None
+        elif new_window.upper() in ['D', 'H', 'M']:
+            self.__window = new_window.upper()
         else:
-            raise ValueError('Enter a valid name for data file.')
+            raise ValueError("Time window must be: 'D', 'H', 'M'")
 
     @property
     def data_raw(self):
@@ -125,29 +139,33 @@ class AlgorithmEnvironment(object):
         else:
             raise ValueError('Must be Pandas DataFrame object')
 
-    @property
-    def window(self):
-        """Time window to use when selecting sample data"""
-        return self.__window
-
-    @window.setter
-    def window(self, new_window):
-        if new_window is None:
-            self.__window = None
-        elif new_window.upper() in ['D', 'H', 'M']:
-            self.__window = new_window.upper()
-        else:
-            raise ValueError("Time window must be: 'D', 'H', 'M'")
-
-    def update_data(self):
+    def update_data_daily(self):
         """
-        Retrieve all possible available data (D-M-H)
+        Retrieve all possible available daily
         from CryptoCompare and append missing values
         to currently-selected data-file
         """
+        if self.ready_for_cryptocompare():
+            pass
 
-        # retrieve all data
+    def ready_for_cryptocompare(self):
+        """
+        Quick True/False check if attributes are ready for
+        retrieving data from CryptoCompare API
+        """
+        if self.instrument is not None and \
+                self.window is not None:
+            return True
+        else:
+            return False
 
-        # retrieve daily data
-        pass
-        # for symbol in ['BTC','ETH']:
+    def ready_for_gemini(self):
+        """
+        Quick True/False check if attributes are ready for
+        interacting with Gemini API
+        """
+        if self.instrument is not None and \
+                self.window is not None:
+            return True
+        else:
+            return False
