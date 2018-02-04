@@ -7,7 +7,8 @@
 # Andrew Edmonds - 2018
 #
 
-import pandas as pd
+from numpy import NaN
+from pandas import DataFrame
 import tables as tb
 import tstables as ts
 
@@ -18,7 +19,7 @@ def append_to_datafile(symbol, data, file='data.h5'):
     """Append data (DataFrame) to HDF5 file"""
     if symbol.upper() not in ['BTC', 'ETH']:
         raise ValueError('Symbol must be BTC or ETH')
-    if not isinstance(data, pd.DataFrame):
+    if not isinstance(data, DataFrame):
         raise ValueError('Data must be Pandas DataFrame')
     file = ensure_hdf5(str(file))
     try:
@@ -75,10 +76,37 @@ def get_minmax_daterange(symbol, file='data.h5'):
             ts = f.root.BTC._f_get_timeseries()
         else:
             ts = f.root.ETH._f_get_timeseries()
-        if not ensure_timeseries(ts):
-            return None, None
-        min_date, max_date = ts.min_dt(), ts.max_dt()
+        min_date, max_date = get_minmax_timeseries(ts)
         f.close()
         return min_date, max_date
     except:
         print("Error getting min-max dates from to {}".format(file))
+
+
+def get_minmax_timeseries(timeseries):
+    """Get min and max of timeseries on HDF5 file"""
+    if isinstance(timeseries, ts.TsTable):
+        try:
+            min, max = timeseries.min_dt(), timeseries.max_dt()
+        except TypeError:
+            return None, None
+        return min, max
+    else:
+        return None, None
+
+
+def get_minmax_dataframe(dataframe):
+    """Get min and max of datetime index of DataFrame object"""
+    if isinstance(dataframe, DataFrame):
+        min = convert_timestamp_to_datetime(dataframe.index.min())
+        max = convert_timestamp_to_datetime(dataframe.index.max())
+        if min is NaN or max is NaN:
+            return None, None
+        return min, max
+    else:
+        return None, None
+
+
+def convert_timestamp_to_datetime(timestamp):
+    """Convert timestamps to UTC local datetime objects"""
+    return timestamp.tz_localize('UTC').to_pydatetime()
