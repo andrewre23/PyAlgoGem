@@ -149,7 +149,12 @@ class AlgorithmEnvironment(object):
             raise ValueError('Must select an instrument first')
         if self.window is None:
             raise ValueError('Must select valid window (D/M/H)')
-        df = self.CC.historical_price_daily(self.instrument)
+        if self.window == 'D':
+            df = self.CC.historical_price_daily(self.instrument)
+        elif self.window == 'H':
+            df = self.CC.historical_price_daily(self.instrument)
+        elif self.window == 'M':
+            df = self.CC.historical_price_daily(self.instrument)
         old_min, old_max = data.get_minmax_daterange(self.instrument, self.file)
         new_min, new_max = df.index.min(), df.index.max()
         # if no old min/max, then append everything
