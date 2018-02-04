@@ -8,6 +8,8 @@
 #
 
 import datetime as dt
+import tables as tb
+import tstables as ts
 
 
 def ensure_hdf5(name):
@@ -22,7 +24,20 @@ def ensure_hdf5(name):
 def ensure_datetime(datetime):
     """Ensure datetime file is compatible
     for HDF5 timeseries read/write"""
-    if type(datetime) not in [dt.datetime, dt.date]:
+    if type(datetime) in [dt.datetime, dt.date]:
+        return True
+    else:
         return False
+
+
+def ensure_timeseries(timeseries):
+    """Ensure timeseries object is non-blank
+    for HDF5 timeseries read/write"""
+    if isinstance(timeseries, ts.TsTable):
+        try:
+            timeseries.min_dt()
+        except TypeError:
+            return False
+        return True
     else:
         return True
