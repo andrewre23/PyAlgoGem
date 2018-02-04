@@ -162,7 +162,7 @@ class AlgorithmEnvironment(object):
         if old_min is None or old_max is None:
             data.append_to_datafile(self.instrument, hist_df, self.file)
         # duplicates - if new range within old range, do nothing
-        if old_min > new_min and old_max < new_max:
+        if old_min < new_min and old_max > new_max:
             return
 
         # if yes, then choose range between new min/max
