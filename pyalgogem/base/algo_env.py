@@ -145,27 +145,15 @@ class AlgorithmEnvironment(object):
         from CryptoCompare and append missing values
         to currently-selected data-file
         """
-        if self.ready_for_cryptocompare():
-            pass
-
-    def ready_for_cryptocompare(self):
-        """
-        Quick True/False check if attributes are ready for
-        retrieving data from CryptoCompare API
-        """
-        if self.instrument is not None and \
-                self.window is not None:
-            return True
-        else:
-            return False
-
-    def ready_for_gemini(self):
-        """
-        Quick True/False check if attributes are ready for
-        interacting with Gemini API
-        """
-        if self.instrument is not None and \
-                self.window is not None:
-            return True
-        else:
-            return False
+        if self.instrument is None:
+            raise ValueError('Must select an instrument first')
+        if self.window != 'D':
+            raise ValueError('Must select Daily window (D)')
+        df = self.CC.historical_price_daily(self.instrument)
+        old_min, old_max = data.get_minmax_daterange(self.instrument, self.file)
+        new_min, new_max = df.index.min(), df.index.max()
+        # if no old min/max, then append everything
+        if old_min is None or old_max is None:
+            data.append_to_datafile(self.instrument, df, self.file)
+        # if yes, then choose range between new min/max
+        # that is not within range of old min/max already
