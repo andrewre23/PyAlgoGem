@@ -11,7 +11,7 @@ import pandas as pd
 import tables as tb
 import tstables as ts
 
-from ._data_helpers import ensure_datetime, ensure_hdf5
+from ._data_helpers import ensure_datetime, ensure_hdf5, ensure_timeseries
 
 
 def append_to_datafile(symbol, data, file='data.h5'):
@@ -75,6 +75,8 @@ def get_minmax_daterange(symbol, file='data.h5'):
             ts = f.root.BTC._f_get_timeseries()
         else:
             ts = f.root.ETH._f_get_timeseries()
+        if not ensure_timeseries(ts):
+            return None, None
         min_date, max_date = ts.min_dt(), ts.max_dt()
         f.close()
         return min_date, max_date
