@@ -40,4 +40,4 @@ def ensure_timeseries(timeseries):
             return False
         return True
     else:
-        return True
+        return False
