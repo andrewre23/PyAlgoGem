@@ -7,12 +7,14 @@
 # Andrew Edmonds - 2018
 #
 
-from numpy import NaN
-from pandas import DataFrame
 
 import datetime as dt
 import tables as tb
 import tstables as ts
+
+from numpy import NaN
+from pandas import DataFrame
+
 
 
 def ensure_hdf5(name):
@@ -25,8 +27,10 @@ def ensure_hdf5(name):
 
 
 def ensure_datetime(datetime):
-    """Ensure datetime file is compatible
-    for HDF5 timeseries read/write"""
+    """
+    Ensure datetime file is compatible
+    for HDF5 timeseries read/write
+    """
     if type(datetime) in [dt.datetime, dt.date]:
         return True
     else:
@@ -34,8 +38,10 @@ def ensure_datetime(datetime):
 
 
 def ensure_timeseries(timeseries):
-    """Ensure timeseries object is non-blank
-    for HDF5 timeseries read/write"""
+    """
+    Ensure timeseries object is non-blank
+    for HDF5 timeseries read/write
+    """
     if isinstance(timeseries, ts.TsTable):
         try:
             timeseries.min_dt()
@@ -73,3 +79,28 @@ def get_minmax_dataframe(dataframe):
 def convert_timestamp_to_datetime(timestamp):
     """Convert timestamps to UTC local datetime objects"""
     return timestamp.tz_localize('UTC').to_pydatetime()
+
+def select_new_values(dataframe, old_min, old_max):
+    """
+    Select subset of DataFrame that resides outside
+    of the old min/max range
+    """
+    new_min, new_max = get_minmax_dataframe(dataframe)
+    if (old_min is None or old_max is None) or \
+            (new_max < old_min) or (new_min > old_max):
+        return dataframe
+    # duplicates - if new range within old range, do nothing
+    elif old_min < new_min and old_max > new_max:
+        return
+    # subset - select new values not already in old range
+    elif new_min < old_min:
+        # select values before before old_min
+        if new_max < old_max:
+            return dataframe[dataframe.index < old_min]
+        # select values outside of old min/max range
+        elif new_max > old_max:
+            return dataframe[dataframe.index<old_min].append( \
+                dataframe[dataframe.index > old_max])
+    # select values after old_max
+    elif new_min > old_min and new_max > old_max:
+        return dataframe[dataframe.index > old_max]
