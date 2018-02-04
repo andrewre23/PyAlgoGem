@@ -139,7 +139,7 @@ class AlgorithmEnvironment(object):
         else:
             raise ValueError('Must be Pandas DataFrame object')
 
-    def update_data_daily(self):
+    def update_all_historical(self):
         """
         Retrieve all possible available daily
         from CryptoCompare and append missing values
@@ -147,8 +147,8 @@ class AlgorithmEnvironment(object):
         """
         if self.instrument is None:
             raise ValueError('Must select an instrument first')
-        if self.window != 'D':
-            raise ValueError('Must select Daily window (D)')
+        if self.window is None:
+            raise ValueError('Must select valid window (D/M/H)')
         df = self.CC.historical_price_daily(self.instrument)
         old_min, old_max = data.get_minmax_daterange(self.instrument, self.file)
         new_min, new_max = df.index.min(), df.index.max()
