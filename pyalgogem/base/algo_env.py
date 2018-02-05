@@ -45,7 +45,6 @@ class AlgorithmEnvironment(object):
                 with same name
         instrument : str
             name of instrument to be used - must be BTC or ETH
-
         """
 
         # set parametric values
@@ -140,16 +139,23 @@ class AlgorithmEnvironment(object):
         else:
             raise ValueError('Must be Pandas DataFrame object')
 
+    def check_key_attributes(self):
+        """
+        Raise error  if AlgorithmEnvironment has not
+        chosen valid instrument and window attributes
+        """
+        if self.instrument is None or self.window is None:
+            raise ValueError('Please select an instrument and time window')
+        else:
+            return
+
     def update_all_historical(self):
         """
         Retrieve all possible available daily
         from CryptoCompare and append missing values
         to currently-selected data-file
         """
-        if self.instrument is None:
-            raise ValueError('Must select an instrument first')
-        if self.window is None:
-            raise ValueError('Must select valid window (D/M/H)')
+        self.check_key_attributes()
         if self.window == 'D':
             hist_df = self.CC.historical_price_daily(self.instrument)
         elif self.window == 'H':
@@ -162,5 +168,14 @@ class AlgorithmEnvironment(object):
                                         old_min=old_min, old_max=old_max)
         # as long as there is new data to add, add to datafile
         if new_df is not None:
+            print('No new data found - no data saved locally')
+        else:
             data.append_to_datafile(symbol=self.instrument, data=new_df)
-        print('All available historical data has been successfully loaded!')
+            print('All available historical data has been successfully loaded!')
+
+    def read_stored_data(self):
+        """
+        Load available locally-stored data into
+        self.data_raw attribute
+        """
+        self.check_key_attributes()
