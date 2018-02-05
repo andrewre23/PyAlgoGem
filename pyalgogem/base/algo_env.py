@@ -167,7 +167,7 @@ class AlgorithmEnvironment(object):
         new_df = data.select_new_values(dataframe=hist_df, \
                                         old_min=old_min, old_max=old_max)
         # as long as there is new data to add, add to datafile
-        if new_df is not None:
+        if new_df is None:
             print('No new data found - no data saved locally')
         else:
             data.append_to_datafile(symbol=self.instrument, data=new_df)
