@@ -85,22 +85,17 @@ def select_new_values(dataframe, old_min, old_max):
     Select subset of DataFrame that resides outside
     of the old min/max range
     """
+    # add function to return nothing when new values occur
+    # before old values, as cannot append retoractively
     new_min, new_max = get_minmax_dataframe(dataframe)
+    # check if no timeseries exists (blank old min/max)
+    # or if all new data comes after old data
     if (old_min is None or old_max is None) or \
-            (new_max < old_min) or (new_min > old_max):
+             (new_min > old_max):
         return dataframe
-    # duplicates - if new range within old range, do nothing
-    elif old_min < new_min and old_max > new_max:
-        return
-    # subset - select new values not already in old range
-    elif new_min < old_min:
-        # select values before before old_min
-        if new_max < old_max:
-            return dataframe[dataframe.index < old_min]
-        # select values outside of old min/max range
-        elif new_max > old_max:
-            return dataframe[dataframe.index<old_min].append( \
-                dataframe[dataframe.index > old_max])
-    # select values after old_max
-    elif new_min > old_min and new_max > old_max:
+    # select only values newer than previous old max
+    elif (new_max > old_max):
         return dataframe[dataframe.index > old_max]
+    # return None if no new data is more recent than old max
+    else:
+        return None
