@@ -158,8 +158,9 @@ class AlgorithmEnvironment(object):
             hist_df = self.CC.historical_price_minute(self.instrument)
         old_min, old_max = data.get_minmax_daterange(self.instrument, self.file)
         # select subset of data that isn't within range of old min/max
-        new_df = data.select_new_values(hist_df, old_min, old_max)
+        new_df = data.select_new_values(dataframe=hist_df, \
+                                        old_min=old_min, old_max=old_max)
         # as long as there is new data to add, add to datafile
         if new_df is not None:
-            data.append_to_datafile(new_df)
-        print('All available historical data has been successfully loaded')
+            data.append_to_datafile(symbol=self.instrument, data=new_df)
+        print('All available historical data has been successfully loaded!')
