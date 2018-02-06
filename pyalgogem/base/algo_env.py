@@ -15,6 +15,11 @@ import pyalgogem.performance as performance
 
 from pandas import DataFrame
 
+import configparser
+
+config = configparser.ConfigParser()
+config.read('my_keys.cfg')
+
 
 class AlgorithmEnvironment(object):
     """
@@ -22,17 +27,13 @@ class AlgorithmEnvironment(object):
     Using the CryptoCompare API, HDF5, Sci-kit Learn, and Gemini exchange
     """
 
-    def __init__(self, key=None, secret_key=None, sandbox=True, debug=False):
+    def __init__(self, sandbox=True, debug=False):
         """
         Creates container environment to store all data
         for algorithm development, backtesting, and deployment
 
         Parameters
         ==========
-        key : string
-            Gemini API key
-        secret_key:  string
-            Gemini secret API key
         sandbox : bool
             set to using sandbox account or live account
         debug : bool
@@ -53,23 +54,31 @@ class AlgorithmEnvironment(object):
             -'M' : Minute
         """
 
-        # set parametric values
-        if key is None or secret_key is None:
+        # ensure valid Gemini API keys in config file
+        try:
+            self.__key = config['gemini']['key']
+            self.__secret_key = config['gemini']['secret_key']
+        except KeyError:
+            print('Error: please check .cfg file keys and formatting')
+        if self.__key == '' or self.__secret_key == '':
             raise ValueError('Please enter proper API keys')
-        self.__key = key
-        self.__secret_key = secret_key
-        if sandbox:
-            self.__url = 'https://api.sandbox.gemini.com/v1/'
-        else:
-            self.__url = 'https://api.gemini.com/v1/'
-        self.__debug = debug
+
+        # ensure debug is set to permitted value
+        if debug not in [True, False]:
+            raise ValueError("Enter valid boolean value for 'debug'")
 
         # set initial attributes
-        self.file = 'data.h5'
+        self.sandbox = sandbox
+        self.__debug = debug
+
+        # set initial algorithm attributes
         self.symbol = None
         self.window = None
+
+        # set data attributes
         self.data_raw = None
         self.data_sample = None
+        self.file = 'data.h5'
 
         # create API objects for Cryptocompare and Gemini
         self.CC = data.CryptoCompareAPI()
@@ -77,16 +86,21 @@ class AlgorithmEnvironment(object):
         self.GSTREAM = data.GeminiStreamAPI(self.__key, self.__secret_key)
 
     @property
-    def file(self):
-        """Name of data file to read/write from"""
-        return self.__file
+    def sandbox(self):
+        """Switch from sandbox to live-acount"""
+        return self.__sandbox
 
-    @file.setter
-    def file(self, new_file):
-        if new_file is not None:
-            self.__file = data.create_datafile(str(new_file))
+    @sandbox.setter
+    def sandbox(self, new_sandbox):
+        """Only allow True/False values"""
+        if new_sandbox in [True, False]:
+            self.__sandbox = new_sandbox
+            if new_sandbox:
+                self.__url = 'https://api.sandbox.gemini.com/v1/'
+            else:
+                self.__url = 'https://api.gemini.com/v1/'
         else:
-            raise ValueError('Enter a valid name for data file.')
+            raise ValueError('Must be boolean value')
 
     @property
     def symbol(self):
@@ -95,9 +109,11 @@ class AlgorithmEnvironment(object):
 
     @symbol.setter
     def symbol(self, new_symbol):
+        """Only allow 'ETH', 'BTC' or 'None'"""
+        symbol_str = str(new_symbol)
         if new_symbol is None:
-            self.__symbol = None
-        elif new_symbol.upper() not in [None, 'BTC', 'ETH']:
+            self.__symbol = new_symbol
+        elif symbol_str.upper() not in ['BTC', 'ETH']:
             raise ValueError("Symbol must be BTC or ETH")
         else:
             self.__symbol = new_symbol.upper()
@@ -109,6 +125,7 @@ class AlgorithmEnvironment(object):
 
     @window.setter
     def window(self, new_window):
+        """Only allow 'D', 'H', or 'M'"""
         if new_window is None:
             self.__window = None
         elif new_window.upper() in ['D', 'H', 'M']:
@@ -136,12 +153,23 @@ class AlgorithmEnvironment(object):
 
     @data_sample.setter
     def data_sample(self, new_data_sample):
-        """In-Sample data to use for training and backtesting"""
         if new_data_sample is None or \
                 isinstance(new_data_sample, DataFrame):
             self.__data_sample = new_data_sample
         else:
             raise ValueError('Must be Pandas DataFrame object')
+
+    @property
+    def file(self):
+        """Name of data file to read/write from"""
+        return self.__file
+
+    @file.setter
+    def file(self, new_file):
+        if new_file is not None:
+            self.__file = data.create_datafile(str(new_file))
+        else:
+            raise ValueError('Enter a valid name for data file.')
 
     def check_key_attributes(self):
         """
