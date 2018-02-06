@@ -144,8 +144,11 @@ class AlgorithmEnvironment(object):
         Raise error  if AlgorithmEnvironment has not
         chosen valid instrument and window attributes
         """
-        if self.instrument is None or self.window is None:
-            raise ValueError('Please select an instrument and time window')
+        if self.instrument is None or \
+                self.window is None or \
+                self.file is None:
+            raise ValueError('Please ensure you have chosen: ',
+                             'an instrument, time window, and local file')
         else:
             return
 
@@ -168,14 +171,21 @@ class AlgorithmEnvironment(object):
                                         old_min=old_min, old_max=old_max)
         # as long as there is new data to add, add to datafile
         if new_df is None:
-            print('No new data found - no data saved locally')
+            print('No new data for {} found - no data saved locally'. \
+                  format(self.instrument))
         else:
             data.append_to_datafile(symbol=self.instrument, data=new_df)
-            print('All available historical data has been successfully loaded!')
+            print('All available historical data for {} has been successfully loaded!'. \
+                  format(self.instrument))
 
-    def read_stored_data(self):
+    def read_stored_data(self, start=None, end=None,all_data=True):
         """
         Load available locally-stored data into
         self.data_raw attribute
+        -Can select subset of timeseries as ts object
         """
         self.check_key_attributes()
+        self.data_raw = data.read_datafile(symbol=self.instrument, \
+                    start=start, end=end, file=self.file, all_data=all_data)
+        if self.data_raw is not None:
+            print("Data has been loaded into 'data_raw'!")
