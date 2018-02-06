@@ -1,5 +1,5 @@
 #
-# PyAlgo Project
+# PyAlgoGem Project
 # data/cryptocompare_api
 #
 # functions to interact with Cryptocompare API

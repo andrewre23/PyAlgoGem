@@ -1,5 +1,5 @@
 #
-# PyAlgo Project
+# PyAlgoGem Project
 # data/file_management
 #
 # functions to manage HDF5 files

@@ -1,5 +1,5 @@
 #
-# PyAlgo Project
+# PyAlgoGem Project
 # backtest/
 #
 #

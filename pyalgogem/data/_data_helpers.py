@@ -1,5 +1,5 @@
 #
-# PyAlgo Project
+# PyAlgoGem Project
 # data/helpers
 #
 # functions to assist in data tasks

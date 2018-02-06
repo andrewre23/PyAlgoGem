@@ -1,5 +1,5 @@
 #
-# PyAlgo Project
+# PyAlgoGem Project
 # base/
 #
 # main module containing AlgorithmEnvironment object

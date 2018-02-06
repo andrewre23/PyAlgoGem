@@ -1,5 +1,5 @@
 #
-# PyAlgo Project
+# PyAlgoGem Project
 # data/add_read
 #
 # functions to read/write from HDF5 files

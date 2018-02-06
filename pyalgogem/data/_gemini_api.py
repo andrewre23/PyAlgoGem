@@ -1,5 +1,5 @@
 #
-# PyAlgo Project
+# PyAlgoGem Project
 # data/gemini_api
 #
 # functions to interact with Gemini API
