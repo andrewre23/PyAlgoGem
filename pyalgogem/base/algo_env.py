@@ -19,7 +19,7 @@ from pandas import DataFrame
 class AlgorithmEnvironment(object):
     """
     Wrapper class object for Algorithmic Trading of Cryptocurrencies
-    Using the CryptoCompare API, HDFS, Sci-kit Learn, and Gemini exchange
+    Using the CryptoCompare API, HDF5, Sci-kit Learn, and Gemini exchange
     """
 
     def __init__(self, key=None, secret_key=None, sandbox=True, debug=False):
