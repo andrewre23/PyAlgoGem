@@ -4,6 +4,9 @@
 #
 # functions to interact with Gemini API
 #
+# Modeld after  pygem_socket class written by:
+# Michael Schwed and Dr. Yves Hilpsch
+#
 # Andrew Edmonds - 2018
 #
 
