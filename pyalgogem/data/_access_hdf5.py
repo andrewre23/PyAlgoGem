@@ -30,7 +30,6 @@ def append_to_datafile(symbol, data, file='data.h5'):
         tseries.append(data)
         f.close()
     except:
-        f.close()
         print("Error appending to {}".format(file))
 
 
@@ -48,20 +47,21 @@ def read_datafile(symbol, start=None, end=None, file='data.h5', all_data=True):
     if symbol.upper() not in ['BTC', 'ETH']:
         raise ValueError('Symbol must be BTC or ETH')
     file = ensure_hdf5(str(file))
-
     try:
-        f = tb.open_file(file, 'r')
-        if symbol.upper() == 'BTC':
-            ts = f.root.BTC._f_get_timeseries()
-        else:
-            ts = f.root.ETH._f_get_timeseries()
-        if all_data:
-            start, end = get_minmax_daterange(symbol, file=file)
-        dataset = ts.read_range(start, end)
-        f.close()
+        with tb.open_file(file, 'r') as f:
+            if symbol.upper() == 'BTC':
+                ts = f.root.BTC._f_get_timeseries()
+            else:
+                ts = f.root.ETH._f_get_timeseries()
+            if all_data:
+                start, end = get_minmax_daterange(symbol, file=file)
+            if start is None and end is None:
+                print('No data found in {}'.format(file))
+                return
+            dataset = ts.read_range(start, end)
         return dataset
     except:
-        print("Error reading from to {}".format(file))
+        print("Error reading from {}".format(file))
 
 
 def get_minmax_daterange(symbol, file='data.h5'):
@@ -80,5 +80,3 @@ def get_minmax_daterange(symbol, file='data.h5'):
         return min_date, max_date
     except:
         print("Error getting min-max dates from to {}".format(file))
-
-
