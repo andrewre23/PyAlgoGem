@@ -17,6 +17,7 @@ class GeminiAPI(object):
     def __init__(self, key, secret_key):
         self.__key = key
         self.__secret_key = secret_key
+        self.__last_order_id = None
 
     def tester(self):
         print('test','1, 2')
