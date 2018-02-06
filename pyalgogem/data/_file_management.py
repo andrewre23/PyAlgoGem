@@ -38,6 +38,7 @@ def create_datafile(name='data.h5'):
         h5.create_ts('/', 'BTC', CryptoCompareTable)
         h5.create_ts('/', 'ETH', CryptoCompareTable)
         h5.close()
+        print('{} created!'.format(name))
     return name
 
 
@@ -49,6 +50,8 @@ def copy_datafile(source=None, copy=None):
     copy = ensure_hdf5(str(copy))
     try:
         shutil.copy(source, copy)
+        print('{} successfully copied to {}'. \
+              format(source, copy))
     except OSError:
         print('Error copying {}'.format(source))
 
@@ -60,5 +63,6 @@ def remove_datafile(name=None):
     name = ensure_hdf5(str(name))
     try:
         os.remove(name)
+        print('{} successfully removed!'.format(name))
     except OSError:
         print('Error deleting {}'.format(name))
