@@ -24,7 +24,8 @@ class AlgorithmEnvironment(object):
 
     def __init__(self, key=None, secret_key=None, sandbox=True, debug=False):
         """
-        Creates algorithm_environment object (ae)
+        Creates container environment to store all data
+        for algorithm development, backtesting, and deployment
 
         Parameters
         ==========
@@ -122,7 +123,6 @@ class AlgorithmEnvironment(object):
 
     @data_raw.setter
     def data_raw(self, new_data_raw):
-        """Raw retrieval of data from dataset"""
         if new_data_raw is None or \
                 isinstance(new_data_raw, DataFrame):
             self.__data_raw = new_data_raw
@@ -171,8 +171,7 @@ class AlgorithmEnvironment(object):
             hist_df = self.CC.historical_price_minute(self.symbol)
         old_min, old_max = data.get_minmax_daterange(self.symbol, self.file)
         # select subset of data that isn't within range of old min/max
-        new_df = data.select_new_values(dataframe=hist_df, \
-                                        old_min=old_min, old_max=old_max)
+        new_df = data.select_new_values(dataframe=hist_df, old_min=old_min, old_max=old_max)
         # as long as there is new data to add, add to datafile
         if new_df is None:
             print('No new data for {} found - no data saved locally'. \
@@ -182,7 +181,7 @@ class AlgorithmEnvironment(object):
             print('All available historical data for {} has been successfully loaded!'. \
                   format(self.symbol))
 
-    def read_stored_data(self, start=None, end=None,all_data=True):
+    def read_stored_data(self, start=None, end=None, all_data=True):
         """
         Load available locally-stored data into
         self.data_raw attribute
@@ -190,6 +189,6 @@ class AlgorithmEnvironment(object):
         """
         self.check_key_attributes()
         self.data_raw = data.read_datafile(symbol=self.symbol, \
-                    start=start, end=end, file=self.file, all_data=all_data)
+                                           start=start, end=end, file=self.file, all_data=all_data)
         if self.data_raw is not None:
             print("Data has been loaded into 'data_raw'!")
