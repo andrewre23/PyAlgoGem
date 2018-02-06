@@ -41,17 +41,20 @@ class AlgorithmEnvironment(object):
 
         Attributes
         ==========
-        file : str
-            name of datafile to be used by environment
-            on update: creates new HDF5 file in CWD
-                with same name
+
         symbol : str
-            symbol of currency to be used - must be BTC or ETH
+            symbol of currency to be used - must be
+            -BTC : Bitcoin
+            -ETH : Ethereum
         window : str
             time window to be used for data - must be:
             -'D' : Daily
             -'H' : Hourly
             -'M' : Minute
+        file : str
+            name of datafile to be used by environment
+            on update: creates new HDF5 file in CWD
+                with same name
         """
 
         # ensure valid Gemini API keys in config file
