@@ -39,12 +39,17 @@ class AlgorithmEnvironment(object):
 
         Attributes
         ==========
-        filename : str
+        file : str
             name of datafile to be used by environment
             on update: creates new HDF5 file in CWD
                 with same name
-        instrument : str
-            name of instrument to be used - must be BTC or ETH
+        symbol : str
+            symbol of currency to be used - must be BTC or ETH
+        window : str
+            time window to be used for data - must be:
+            -'D' : Daily
+            -'H' : Hourly
+            -'M' : Minute
         """
 
         # set parametric values
@@ -60,7 +65,7 @@ class AlgorithmEnvironment(object):
 
         # set initial attributes
         self.file = 'data.h5'
-        self.instrument = None
+        self.symbol = None
         self.window = None
         self.data_raw = None
         self.data_sample = None
@@ -83,19 +88,18 @@ class AlgorithmEnvironment(object):
             raise ValueError('Enter a valid name for data file.')
 
     @property
-    def instrument(self):
-        """Name of data file to read/write from"""
-        return self.__instrument
+    def symbol(self):
+        """Symbol of cryptocurrency to utilize in environment"""
+        return self.__symbol
 
-    @instrument.setter
-    def instrument(self, new_instrument):
-        """Instrument to be used in algorithm"""
-        if new_instrument is None:
-            self.__instrument = None
-        elif new_instrument.upper() not in [None, 'BTC', 'ETH']:
-            raise ValueError("Instrument must be BTC or ETH")
+    @symbol.setter
+    def symbol(self, new_symbol):
+        if new_symbol is None:
+            self.__symbol = None
+        elif new_symbol.upper() not in [None, 'BTC', 'ETH']:
+            raise ValueError("Symbol must be BTC or ETH")
         else:
-            self.__instrument = new_instrument.upper()
+            self.__symbol = new_symbol.upper()
 
     @property
     def window(self):
@@ -142,13 +146,13 @@ class AlgorithmEnvironment(object):
     def check_key_attributes(self):
         """
         Raise error  if AlgorithmEnvironment has not
-        chosen valid instrument and window attributes
+        chosen valid symbol and window attributes
         """
-        if self.instrument is None or \
+        if self.symbol is None or \
                 self.window is None or \
                 self.file is None:
             raise ValueError('Please ensure you have chosen: ',
-                             'an instrument, time window, and local file')
+                             'a symbol, time window, and local file')
         else:
             return
 
@@ -160,23 +164,23 @@ class AlgorithmEnvironment(object):
         """
         self.check_key_attributes()
         if self.window == 'D':
-            hist_df = self.CC.historical_price_daily(self.instrument)
+            hist_df = self.CC.historical_price_daily(self.symbol)
         elif self.window == 'H':
-            hist_df = self.CC.historical_price_hourly(self.instrument)
+            hist_df = self.CC.historical_price_hourly(self.symbol)
         elif self.window == 'M':
-            hist_df = self.CC.historical_price_minute(self.instrument)
-        old_min, old_max = data.get_minmax_daterange(self.instrument, self.file)
+            hist_df = self.CC.historical_price_minute(self.symbol)
+        old_min, old_max = data.get_minmax_daterange(self.symbol, self.file)
         # select subset of data that isn't within range of old min/max
         new_df = data.select_new_values(dataframe=hist_df, \
                                         old_min=old_min, old_max=old_max)
         # as long as there is new data to add, add to datafile
         if new_df is None:
             print('No new data for {} found - no data saved locally'. \
-                  format(self.instrument))
+                  format(self.symbol))
         else:
-            data.append_to_datafile(symbol=self.instrument, data=new_df)
+            data.append_to_datafile(symbol=self.symbol, data=new_df)
             print('All available historical data for {} has been successfully loaded!'. \
-                  format(self.instrument))
+                  format(self.symbol))
 
     def read_stored_data(self, start=None, end=None,all_data=True):
         """
@@ -185,7 +189,7 @@ class AlgorithmEnvironment(object):
         -Can select subset of timeseries as ts object
         """
         self.check_key_attributes()
-        self.data_raw = data.read_datafile(symbol=self.instrument, \
+        self.data_raw = data.read_datafile(symbol=self.symbol, \
                     start=start, end=end, file=self.file, all_data=all_data)
         if self.data_raw is not None:
             print("Data has been loaded into 'data_raw'!")
