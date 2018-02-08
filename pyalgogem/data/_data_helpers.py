@@ -8,12 +8,10 @@
 #
 
 
-import datetime as dt
-import tables as tb
-import tstables as ts
-
 from numpy import NaN
 from pandas import DataFrame
+from tstables import TsTable
+from datetime import date,datetime
 
 
 
@@ -31,7 +29,7 @@ def ensure_datetime(datetime):
     Ensure datetime file is compatible
     for HDF5 timeseries read/write
     """
-    if type(datetime) in [dt.datetime, dt.date]:
+    if type(datetime) in [datetime, date]:
         return True
     else:
         return False
@@ -42,7 +40,7 @@ def ensure_timeseries(timeseries):
     Ensure timeseries object is non-blank
     for HDF5 timeseries read/write
     """
-    if isinstance(timeseries, ts.TsTable):
+    if isinstance(timeseries, TsTable):
         try:
             timeseries.min_dt()
         except TypeError:
@@ -54,7 +52,7 @@ def ensure_timeseries(timeseries):
 
 def get_minmax_timeseries(timeseries):
     """Get min and max of timeseries on HDF5 file"""
-    if isinstance(timeseries, ts.TsTable):
+    if isinstance(timeseries, TsTable):
         try:
             min, max = timeseries.min_dt(), timeseries.max_dt()
         except TypeError:
