@@ -7,9 +7,10 @@
 # Andrew Edmonds - 2018
 #
 
-from pandas import DataFrame
 import tables as tb
 import tstables as ts
+
+from pandas import DataFrame
 
 from ._data_helpers import ensure_datetime, ensure_hdf5, get_minmax_timeseries
 
