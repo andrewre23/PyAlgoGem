@@ -169,7 +169,7 @@ class AlgorithmEnvironment(object):
 
     @file.setter
     def file(self, new_file):
-        if new_file is not None:
+        if new_file:
             self.__file = data.create_datafile(str(new_file))
         else:
             raise ValueError('Enter a valid name for data file.')
@@ -179,9 +179,7 @@ class AlgorithmEnvironment(object):
         Raise error  if AlgorithmEnvironment has not
         chosen valid symbol and window attributes
         """
-        if self.symbol is None or \
-                self.window is None or \
-                self.file is None:
+        if not (self.symbol and self.window and self.file):
             raise ValueError('Please ensure you have chosen: ',
                              'a symbol, time window, and local file')
         else:
@@ -221,5 +219,5 @@ class AlgorithmEnvironment(object):
         self.check_key_attributes()
         self.data_raw = data.read_datafile(symbol=self.symbol, \
                                            start=start, end=end, file=self.file, all_data=all_data)
-        if self.data_raw is not None:
+        if self.data_raw:
             print("Data has been loaded into 'data_raw'!")
