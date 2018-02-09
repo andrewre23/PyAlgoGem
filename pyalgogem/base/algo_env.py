@@ -85,8 +85,8 @@ class AlgorithmEnvironment(object):
 
         # create API objects for Cryptocompare and Gemini
         self.CC = data.CryptoCompareAPI()
-        self.GEMINI = data.GeminiAPI(self.__key, self.__secret_key)
-        self.GSTREAM = data.GeminiStreamAPI(self.__key, self.__secret_key)
+        self.GEMINI = data.GeminiAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
+        self.GSTREAM = data.GeminiStreamAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
 
     @property
     def sandbox(self):

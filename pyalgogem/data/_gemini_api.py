@@ -17,9 +17,11 @@ class GeminiAPI(object):
     For Cryptocurrencies Using the CryptoCompare API
     """
 
-    def __init__(self, key, secret_key):
+    def __init__(self, key, secret_key, sandbox=True,debug=False):
         self.__key = key
         self.__secret_key = secret_key
+        self.__sandbox = sandbox
+        self.__debug = debug
         self.__last_order_id = None
 
     def tester(self):
