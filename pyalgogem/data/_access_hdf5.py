@@ -22,6 +22,7 @@ def append_to_datafile(symbol, data, file='data.h5'):
     if not isinstance(data, DataFrame):
         raise ValueError('Data must be Pandas DataFrame')
     file = ensure_hdf5(str(file))
+
     try:
         f = tb.open_file(file, 'a')
         if symbol.upper() == 'BTC':
@@ -48,6 +49,7 @@ def read_datafile(symbol, start=None, end=None, file='data.h5', all_data=True):
     if symbol.upper() not in ['BTC', 'ETH']:
         raise ValueError('Symbol must be BTC or ETH')
     file = ensure_hdf5(str(file))
+
     try:
         with tb.open_file(file, 'r') as f:
             if symbol.upper() == 'BTC':
@@ -70,6 +72,7 @@ def get_minmax_daterange(symbol, file='data.h5'):
     if symbol.upper() not in ['BTC', 'ETH']:
         raise ValueError('Symbol must be BTC or ETH')
     file = ensure_hdf5(str(file))
+
     try:
         f = tb.open_file(file, 'r')
         if symbol.upper() == 'BTC':

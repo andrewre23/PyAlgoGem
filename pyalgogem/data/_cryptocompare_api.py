@@ -36,8 +36,10 @@ class CryptoCompareAPI(object):
             .format(symbol.upper(), ','.join(comparison_symbols).upper())
         if exchange:
             url += '&e={}'.format(exchange)
+
         page = requests.get(url)
         data = page.json()
+
         return data
 
     def historical_price(self, symbol, ts, comparison_symbols=['USD'], exchange='Gemini'):
@@ -61,8 +63,10 @@ class CryptoCompareAPI(object):
             url += {'ts'.format(ts)}
         if exchange:
             url += '&e={}'.format(exchange)
+
         page = requests.get(url)
         data = page.json()
+
         return data
 
     def historical_price_daily(self, symbol, comparison_symbol='USD', all_data=True, \
@@ -95,10 +99,12 @@ class CryptoCompareAPI(object):
             url += '&e={}'.format(exchange)
         if all_data:
             url += '&allData=true'
+
         page = requests.get(url)
         df = pd.DataFrame(page.json()['Data'])
         df.index = [dt.datetime.fromtimestamp(d) for d in df.time]
         df = df.drop('time', axis=1)
+
         return df
 
     def historical_price_hourly(self, symbol, comparison_symbol='USD', limit=1, \
@@ -127,10 +133,12 @@ class CryptoCompareAPI(object):
             .format(symbol.upper(), comparison_symbol.upper(), limit, aggregate)
         if exchange:
             url += '&e={}'.format(exchange)
+
         page = requests.get(url)
         df = pd.DataFrame(page.json()['Data'])
         df.index = [dt.datetime.fromtimestamp(d) for d in df.time]
         df = df.drop('time', axis=1)
+
         return df
 
     def historical_price_minute(self, symbol, comparison_symbol='USD', limit=1, \
@@ -159,8 +167,10 @@ class CryptoCompareAPI(object):
             .format(symbol.upper(), comparison_symbol.upper(), limit, aggregate)
         if exchange:
             url += '&e={}'.format(exchange)
+
         page = requests.get(url)
         df = pd.DataFrame(page.json()['Data'])
         df.index = [dt.datetime.fromtimestamp(d) for d in df.time]
         df = df.drop('time', axis=1)
+
         return df
