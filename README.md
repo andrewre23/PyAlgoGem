@@ -7,9 +7,9 @@
 
 Store and read locally saved price data.
 
--Pull daily/hourly/minute data for BTC and ETH
+-Pull daily/hourly/minute price data using CryptoCompare API
 
--Store data locally in HDF5 file for easy retreival
+-Store data locally in HDF5 (.h5) file for easy retrieval
 
 ### Backtest:
 
