@@ -47,7 +47,7 @@ class GeminiAPI(object):
         if len(paras) is not 0:
             paras_string = '&'.join(paras)
             url = url + '?' + paras_string
-        if self.debug:
+        if self.__debug:
             print('URL: ', url)
 
         return requests.get(url, timeout=10).json()
@@ -58,9 +58,9 @@ class GeminiAPI(object):
         payload = json.dumps(payload)
 
         payload_encode = base64.b64encode(bytearray(payload, 'utf-8'))
-        sig = hmac.new(bytearray(self.secret_key, 'utf-8'),
+        sig = hmac.new(bytearray(self.__secret_key, 'utf-8'),
                        payload_encode, hashlib.sha384).hexdigest()
-        headers = {'X-GEMINI-APIKEY': self.key,
+        headers = {'X-GEMINI-APIKEY': self.__key,
                    'X-GEMINI-PAYLOAD': payload_encode,
                    'X-GEMINI-SIGNATURE': sig}
         url = self.__url + method
@@ -237,7 +237,8 @@ class GeminiAPI(object):
         Typically cancel_all_session_orders is preferable, so that only orders
         related to the current connected session are cancelled.
 
-        Response:
+        Response
+        ========
         The response will be a dictionary with the fields:
 
         result : str
