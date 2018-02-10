@@ -4,7 +4,7 @@
 #
 # functions to interact with Gemini API
 #
-# Modeld after  pygem class written by:
+# Modeld after pygem class written by:
 # Michael Schwed and Dr. Yves Hilpsch
 #
 # Andrew Edmonds - 2018
