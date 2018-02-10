@@ -33,12 +33,14 @@ def create_datafile(name='data.h5'):
     """Create HDF5 file for data storage
     of BTC and ETH timeseries"""
     name = ensure_hdf5(str(name))
+
     if not os.path.isfile(name):
         h5 = tb.open_file(name, 'w')
         h5.create_ts('/', 'BTC', CryptoCompareTable)
         h5.create_ts('/', 'ETH', CryptoCompareTable)
         h5.close()
         print('{} created!'.format(name))
+
     return name
 
 
@@ -48,6 +50,7 @@ def copy_datafile(source=None, copy=None):
         raise ValueError('Error: Please choose valid files')
     source = ensure_hdf5(str(source))
     copy = ensure_hdf5(str(copy))
+
     try:
         shutil.copy(source, copy)
         print('{} successfully copied to {}'. \
@@ -61,6 +64,7 @@ def remove_datafile(name=None):
     if name is None:
         raise ValueError('Error: No file given')
     name = ensure_hdf5(str(name))
+
     try:
         os.remove(name)
         print('{} successfully removed!'.format(name))
