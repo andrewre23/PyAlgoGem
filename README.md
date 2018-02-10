@@ -7,6 +7,10 @@
 
 Store and read locally saved price data.
 
+-Pull daily/hourly/minute data for BTC and ETH
+
+-Store data locally in HDF5 file for easy retreival
+
 ### Backtest:
 
 Backtest strategies on historical data.
