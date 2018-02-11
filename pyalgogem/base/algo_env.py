@@ -180,8 +180,7 @@ class AlgorithmEnvironment(object):
         chosen valid symbol and window attributes
         """
         if not (self.symbol and self.window and self.file):
-            raise ValueError('Please ensure you have chosen: ',
-                             'a symbol, time window, and local file')
+            raise ValueError('Ensure you have chosen: a symbol, time window, and local file')
         else:
             return
 
