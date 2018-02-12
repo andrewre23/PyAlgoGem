@@ -79,8 +79,7 @@ class AlgorithmEnvironment(object):
         self.window = None
 
         # set data attributes
-        self.data_raw = None
-        self.data_sample = None
+        self.dataset = None
         self.file = 'data.h5'
 
         # create API objects for Cryptocompare and Gemini
@@ -137,30 +136,17 @@ class AlgorithmEnvironment(object):
             raise ValueError("Time window must be: 'D', 'H', 'M'")
 
     @property
-    def data_raw(self):
-        """Raw retrieval of data from dataset"""
-        return self.__data_raw
+    def dataset(self):
+        """Object to house raw and sampled data"""
+        return self.__dataset
 
-    @data_raw.setter
-    def data_raw(self, new_data_raw):
-        if new_data_raw is None or \
-                isinstance(new_data_raw, DataFrame):
-            self.__data_raw = new_data_raw
+    @dataset.setter
+    def dataset(self, new_dataset):
+        if new_dataset is None or \
+                isinstance(new_dataset, DataFrame):
+            self.__dataset = data.Dataset(new_dataset)
         else:
-            raise ValueError('Must be Pandas DataFrame object')
-
-    @property
-    def data_sample(self):
-        """In-Sample data to use for training and backtesting"""
-        return self.__data_sample
-
-    @data_sample.setter
-    def data_sample(self, new_data_sample):
-        if new_data_sample is None or \
-                isinstance(new_data_sample, DataFrame):
-            self.__data_sample = new_data_sample
-        else:
-            raise ValueError('Must be Pandas DataFrame object')
+            raise ValueError('Must be Pandas DataFrame object or None')
 
     @property
     def file(self):
@@ -216,7 +202,7 @@ class AlgorithmEnvironment(object):
         -Can select subset of timeseries as ts object
         """
         self.check_key_attributes()
-        self.data_raw = data.read_datafile(symbol=self.symbol, \
+        self.dataset = data.read_datafile(symbol=self.symbol, \
                                            start=start, end=end, file=self.file, all_data=all_data)
-        if self.data_raw:
-            print("Data has been loaded into 'data_raw'!")
+        if self.dataset is not None:
+            print("Data has been loaded into 'dataset' object!")
