@@ -9,6 +9,7 @@
 
 from numpy import log
 from pandas import DataFrame
+from sklearn.preprocessing import label
 
 
 class Dataset(object):
@@ -29,6 +30,10 @@ class Dataset(object):
         """
         self.data_raw = input_data
         self.nlags = None
+
+    def __str__(self):
+        """When printing, print sample dataset"""
+        return self.data_sample.__str__()
 
     @property
     def data_raw(self):

@@ -7,7 +7,10 @@
 # Andrew Edmonds - 2018
 #
 
-
+from sklearn.ensemble import forest
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
 
 class Model(object):
     """
