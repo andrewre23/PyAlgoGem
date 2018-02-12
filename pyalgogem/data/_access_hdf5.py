@@ -53,15 +53,15 @@ def read_datafile(symbol, start=None, end=None, file='data.h5', all_data=True):
     try:
         with tb.open_file(file, 'r') as f:
             if symbol.upper() == 'BTC':
-                ts = f.root.BTC._f_get_timeseries()
+                tseries = f.root.BTC._f_get_timeseries()
             else:
-                ts = f.root.ETH._f_get_timeseries()
+                tseries = f.root.ETH._f_get_timeseries()
             if all_data:
                 start, end = get_minmax_daterange(symbol, file=file)
             if start is None and end is None:
                 print('No data found in {}'.format(file))
                 return
-            dataset = ts.read_range(start, end)
+            dataset = tseries.read_range(start, end)
         return dataset
     except:
         print("Error reading from {}".format(file))
@@ -76,10 +76,10 @@ def get_minmax_daterange(symbol, file='data.h5'):
     try:
         f = tb.open_file(file, 'r')
         if symbol.upper() == 'BTC':
-            ts = f.root.BTC._f_get_timeseries()
+            tseries = f.root.BTC._f_get_timeseries()
         else:
-            ts = f.root.ETH._f_get_timeseries()
-        min_date, max_date = get_minmax_timeseries(ts)
+            tseries = f.root.ETH._f_get_timeseries()
+        min_date, max_date = get_minmax_timeseries(tseries)
         f.close()
         return min_date, max_date
     except:
