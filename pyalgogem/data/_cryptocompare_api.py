@@ -57,8 +57,8 @@ class CryptoCompareAPI(object):
         exchange : str
             name of exchange to source from
         """
-        url = URL_BASE + 'pricehistorical?fsym={}&tsyms={}' \
-            .format(symbol.upper(), ','.join(comparison_symbols).upper())
+        url = URL_BASE + 'pricehistorical?fsym={}&tsyms={}'.format(
+            symbol.upper(), ','.join(comparison_symbols).upper())
         if ts is not None and isinstance(ts, dt.datetime):
             url += {'ts'.format(ts)}
         if exchange:
@@ -69,7 +69,7 @@ class CryptoCompareAPI(object):
 
         return data
 
-    def historical_price_daily(self, symbol, comparison_symbol='USD', all_data=True, \
+    def historical_price_daily(self, symbol, comparison_symbol='USD', all_data=True,
                                limit=1, aggregate=1, exchange='Gemini'):
         """Retrieve Daily OHLC prices, and to/from volume
         -values based on 00:00:00 GMT time
@@ -107,7 +107,7 @@ class CryptoCompareAPI(object):
 
         return df
 
-    def historical_price_hourly(self, symbol, comparison_symbol='USD', limit=1, \
+    def historical_price_hourly(self, symbol, comparison_symbol='USD', limit=1,
                                 aggregate=1, exchange='Gemini'):
         """Retrieve Hourly OHLC prices, and to/from volume
         -values based on 00:00:00 GMT time
@@ -141,7 +141,7 @@ class CryptoCompareAPI(object):
 
         return df
 
-    def historical_price_minute(self, symbol, comparison_symbol='USD', limit=1, \
+    def historical_price_minute(self, symbol, comparison_symbol='USD', limit=1,
                                 aggregate=1, exchange='Gemini'):
         """Retrieve Minute OHLC prices, and to/from volume
         -values based on 00:00:00 GMT time

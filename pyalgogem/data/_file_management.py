@@ -53,8 +53,7 @@ def copy_datafile(source=None, copy=None):
 
     try:
         shutil.copy(source, copy)
-        print('{} successfully copied to {}'. \
-              format(source, copy))
+        print('{} successfully copied to {}'.format(source, copy))
     except OSError:
         print('Error copying {}'.format(source))
 

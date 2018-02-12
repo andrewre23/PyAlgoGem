@@ -11,8 +11,7 @@
 from numpy import NaN
 from pandas import DataFrame
 from tstables import TsTable
-from datetime import date,datetime
-
+from datetime import date, datetime
 
 
 def ensure_hdf5(name):
@@ -24,12 +23,12 @@ def ensure_hdf5(name):
     return name
 
 
-def ensure_datetime(datetime):
+def ensure_datetime(dt):
     """
     Ensure datetime file is compatible
     for HDF5 timeseries read/write
     """
-    if type(datetime) in [datetime, date]:
+    if type(dt) in [datetime, date]:
         return True
     else:
         return False
@@ -54,10 +53,10 @@ def get_minmax_timeseries(timeseries):
     """Get min and max of timeseries on HDF5 file"""
     if isinstance(timeseries, TsTable):
         try:
-            min, max = timeseries.min_dt(), timeseries.max_dt()
+            tsmin, tsmax = timeseries.min_dt(), timeseries.max_dt()
         except TypeError:
             return None, None
-        return min, max
+        return tsmin, tsmax
     else:
         return None, None
 
@@ -65,11 +64,11 @@ def get_minmax_timeseries(timeseries):
 def get_minmax_dataframe(dataframe):
     """Get min and max of datetime index of DataFrame object"""
     if isinstance(dataframe, DataFrame):
-        min = convert_timestamp_to_datetime(dataframe.index.min())
-        max = convert_timestamp_to_datetime(dataframe.index.max())
-        if min is NaN or max is NaN:
+        dfmin = convert_timestamp_to_datetime(dataframe.index.min())
+        dfmax = convert_timestamp_to_datetime(dataframe.index.max())
+        if dfmin is NaN or dfmax is NaN:
             return None, None
-        return min, max
+        return dfmin, dfmax
     else:
         return None, None
 
@@ -77,6 +76,7 @@ def get_minmax_dataframe(dataframe):
 def convert_timestamp_to_datetime(timestamp):
     """Convert timestamps to UTC local datetime objects"""
     return timestamp.tz_localize('UTC').to_pydatetime()
+
 
 def select_new_values(dataframe, old_min, old_max):
     """
@@ -88,11 +88,10 @@ def select_new_values(dataframe, old_min, old_max):
     new_min, new_max = get_minmax_dataframe(dataframe)
     # check if no timeseries exists (blank old min/max)
     # or if all new data comes after old data
-    if (old_min is None or old_max is None) or \
-             (new_min > old_max):
+    if (old_min is None or old_max is None) or (new_min > old_max):
         return dataframe
     # select only values newer than previous old max
-    elif (new_max > old_max):
+    elif new_max > old_max:
         return dataframe[dataframe.index > old_max]
     # return None if no new data is more recent than old max
     else:
