@@ -33,10 +33,58 @@ Monitor performance of an algorithm as it is live-traded.
 
 
 
-# Start
+# Walk-through
 
+
+## Start
+Prerequisites and set-up
+
+### Config
+In your directory you must have config file ('my_keys.config') with:
+
+
+['gemini']
+
+key = your-api-key
+
+secret_key = your-secret-api-key
+
+
+
+### Import and Initialize
 import pyalgogem as pag
 
 -Initialize algorithm environment object to house code
 
 ae = pag.AlgorithmEnvironment()
+
+### Set up parameters
+
+-Select ae.symbol ('BTC'/'ETH') and ae.window ('D'/'H'/'M' - daily/hour/minute)
+
+ae.symbol = 'ETH'; ae.window = 'D' 
+
+## Data
+Retrieving and saving historical data from CryptoCompare
+### Load historical data
+-Update historical data for symbol and window combination and read into memory
+
+--Can pass datetime objects for start/end of timeslice
+
+ae.update_all_historical()
+
+### Read data into Dataset object
+
+ae.read_stored_data()
+
+Now, dataset object (ae.dataset) created to house data
+
+## Backtest
+Testing hypotheses and training Machine Learning models on historical data
+### Log-returns
+-Add log-returns of close-price to sample data
+ae.dataset.add_log_returns()
+
+### Lags
+-Add lags of log-returns to sample data
+ae.dataset.set_return_lags(15)
