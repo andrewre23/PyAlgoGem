@@ -30,3 +30,13 @@ Deploy strategies to real-time trading.
 ### Performance:
 
 Monitor performance of an algorithm as it is live-traded.
+
+
+
+# Start
+
+import pyalgogem as pag
+
+-Initialize algorithm environment object to house code
+
+ae = pag.AlgorithmEnvironment()
