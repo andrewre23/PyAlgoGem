@@ -83,8 +83,10 @@ Now, dataset object (ae.dataset) created to house data
 Testing hypotheses and training Machine Learning models on historical data
 ### Log-returns
 -Add log-returns of close-price to sample data
+
 ae.dataset.add_log_returns()
 
 ### Lags
 -Add lags of log-returns to sample data
+
 ae.dataset.set_return_lags(15)
