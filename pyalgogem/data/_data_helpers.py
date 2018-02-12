@@ -1,6 +1,6 @@
 #
 # PyAlgoGem Project
-# data/helpers
+# data/data_helpers
 #
 # functions to assist in data tasks
 #

@@ -1,6 +1,6 @@
 #
 # PyAlgoGem Project
-# data/add_read
+# data/access_hdf5
 #
 # functions to read/write from HDF5 files
 #
