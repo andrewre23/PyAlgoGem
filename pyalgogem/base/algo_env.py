@@ -177,6 +177,7 @@ class AlgorithmEnvironment(object):
         to currently-selected data-file
         """
         self.check_key_attributes()
+        hist_df = None
         if self.window == 'D':
             hist_df = self.CC.historical_price_daily(self.symbol)
         elif self.window == 'H':
@@ -188,11 +189,11 @@ class AlgorithmEnvironment(object):
         new_df = data.select_new_values(dataframe=hist_df, old_min=old_min, old_max=old_max)
         # as long as there is new data to add, add to datafile
         if new_df is None:
-            print('No new data for {} found - no data saved locally'. \
+            print('No new data for {} found - no data saved locally'.
                   format(self.symbol))
         else:
             data.append_to_datafile(symbol=self.symbol, data=new_df)
-            print('All available historical data for {} has been successfully loaded!'. \
+            print('All available historical data for {} has been successfully loaded!'.
                   format(self.symbol))
 
     def read_stored_data(self, start=None, end=None, all_data=True):
@@ -202,7 +203,7 @@ class AlgorithmEnvironment(object):
         -Can select subset of timeseries as ts object
         """
         self.check_key_attributes()
-        self.dataset = data.read_datafile(symbol=self.symbol, \
-                                           start=start, end=end, file=self.file, all_data=all_data)
+        self.dataset = data.read_datafile(symbol=self.symbol,start=start, end=end,
+                                          file=self.file, all_data=all_data)
         if self.dataset is not None:
             print("Data has been loaded into 'dataset' object!")
