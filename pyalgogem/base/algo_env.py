@@ -84,8 +84,8 @@ class AlgorithmEnvironment(object):
 
         # create API objects for Cryptocompare and Gemini
         self.CC = data.CryptoCompareAPI()
-        self.GEMINI = data.GeminiAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
-        self.GSTREAM = data.GeminiStreamAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
+        self.GEMINI = deployment.GeminiAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
+        self.GSTREAM = deployment.GeminiStreamAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
 
     @property
     def sandbox(self):
@@ -144,7 +144,7 @@ class AlgorithmEnvironment(object):
     def dataset(self, new_dataset):
         if new_dataset is None or \
                 isinstance(new_dataset, DataFrame):
-            self.__dataset = data.Dataset(new_dataset)
+            self.__dataset = backtest.Dataset(new_dataset)
         else:
             raise ValueError('Must be Pandas DataFrame object or None')
 
