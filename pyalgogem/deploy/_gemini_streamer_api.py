@@ -1,6 +1,6 @@
 #
 # PyAlgoGem Project
-# data/gemini_streamer_api
+# deploy/gemini_streamer_api
 #
 # functions to interact with Gemini API
 #

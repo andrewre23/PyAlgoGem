@@ -1,6 +1,6 @@
 #
 # PyAlgoGem Project
-# deployment/
+# deploy/
 #
 #
 #
