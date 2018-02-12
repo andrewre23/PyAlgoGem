@@ -14,5 +14,6 @@ class Model(object):
     Object for training/testing machine learning
     models on dataset in Backtest object
     """
-    def __init__(self):
-        pass
+    def __init__(self,type):
+        if type.lower() not in ['long-out','tiered']:
+            raise ValueError("'type' must be 'long-out' or 'tiered'")
