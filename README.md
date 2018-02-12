@@ -17,6 +17,8 @@ Backtest strategies on historical data.
 
 -Easily add log-returns to dataset and create lags derived from returns
 
+-Create SMA, momentum, or mean-reverting trade signals
+
 ### Deployment:
 
 Deploy strategies to real-time trading.
