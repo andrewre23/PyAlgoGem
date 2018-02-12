@@ -10,7 +10,7 @@
 
 import pyalgogem.data as data
 import pyalgogem.backtest as backtest
-import pyalgogem.deployment as deployment
+import pyalgogem.deploy as deploy
 import pyalgogem.performance as performance
 
 from pandas import DataFrame
@@ -30,7 +30,7 @@ class AlgorithmEnvironment(object):
     def __init__(self, sandbox=True, debug=False):
         """
         Creates container environment to store all data
-        for algorithm development, backtesting, and deployment
+        for algorithm development, backtesting, and deploy
 
         Parameters
         ==========
@@ -84,8 +84,8 @@ class AlgorithmEnvironment(object):
 
         # create API objects for Cryptocompare and Gemini
         self.CC = data.CryptoCompareAPI()
-        self.GEMINI = deployment.GeminiAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
-        self.GSTREAM = deployment.GeminiStreamAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
+        self.GEMINI = deploy.GeminiAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
+        self.GSTREAM = deploy.GeminiStreamAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
 
     @property
     def sandbox(self):
