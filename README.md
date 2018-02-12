@@ -15,6 +15,8 @@ Store and read locally saved price data.
 
 Backtest strategies on historical data.
 
+-Easily add log-returns to dataset and create lags derived from returns
+
 ### Deployment:
 
 Deploy strategies to real-time trading.
