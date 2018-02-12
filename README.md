@@ -21,6 +21,10 @@ Backtest strategies on historical data.
 
 Deploy strategies to real-time trading.
 
+-Get Gemini account information and place orders via API
+
+-Connect to exchange using WebSocket API for live updates and monitoring
+
 ### Performance:
 
 Monitor performance of an algorithm as it is live-traded.
