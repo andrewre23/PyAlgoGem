@@ -28,39 +28,39 @@ class Dataset(object):
         input_data: DataFrame
             initial dataset to be used as raw data
         """
-        self.data_raw = input_data
+        self.raw = input_data
         self.nlags = None
 
     def __str__(self):
         """When printing, print sample dataset"""
-        return self.data_sample.tail().__str__()
+        return self.sample.__str__()
 
     @property
-    def data_raw(self):
+    def raw(self):
         """Raw dataset to load from disk"""
-        return self.__data_raw
+        return self.__raw
 
-    @data_raw.setter
-    def data_raw(self, new_data_raw):
-        if new_data_raw is None or \
-                isinstance(new_data_raw, DataFrame):
-            self.__data_raw = new_data_raw
-            self.data_sample = new_data_raw
-            if self.data_sample is not None:
+    @raw.setter
+    def raw(self, new_raw):
+        if new_raw is None or \
+                isinstance(new_raw, DataFrame):
+            self.__raw = new_raw
+            self.sample = new_raw
+            if self.sample is not None:
                 self.add_log_returns()
         else:
             raise ValueError('Must be Pandas DataFrame object')
 
     @property
-    def data_sample(self):
+    def sample(self):
         """In-Memory dataset to use for training and backtesting"""
-        return self.__data_sample
+        return self.__sample
 
-    @data_sample.setter
-    def data_sample(self, new_data_sample):
-        if new_data_sample is None or \
-                isinstance(new_data_sample, DataFrame):
-            self.__data_sample = new_data_sample
+    @sample.setter
+    def sample(self, new_sample):
+        if new_sample is None or \
+                isinstance(new_sample, DataFrame):
+            self.__sample = new_sample
         else:
             raise ValueError('Must be Pandas DataFrame object')
 
@@ -82,30 +82,30 @@ class Dataset(object):
 
     def reset_sample_data(self):
         """Resets sample data to match raw dataset"""
-        if self.data_raw is None:
-            self.data_sample = None
+        if self.raw is None:
+            self.sample = None
         else:
-            self.data_sample = self.data_raw.copy()
+            self.sample = self.raw.copy()
 
     def add_log_returns(self):
         """Add log-returns column to sampled dataset"""
         self.reset_sample_data()
-        data = self.data_sample
+        data = self.sample
         data['returns'] = log(data['close'] / data['close'].shift(1))
-        self.data_sample = data.dropna()
+        self.sample = data.dropna()
         self.nlags = None
 
     def set_return_lags(self, nlags):
         """Add n-lags to DataFrame"""
         if not (type(nlags) == int and nlags > 1):
             raise ValueError('Must have more than one lag')
-        if nlags > len(self.data_sample) + 1:
+        if nlags > len(self.sample) + 1:
             raise ValueError('Must have less lags than length of sample dataset')
         self.add_log_returns()
-        data = self.data_sample
+        data = self.sample
         for i in range(nlags):
             num = i + 1
             lagname = 'returns_{}'.format(num)
             if lagname not in data.columns:
                 data[lagname] = data['returns'].shift(num)
-        self.data_sample = data.dropna()
+        self.sample = data.dropna()
