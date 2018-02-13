@@ -78,6 +78,7 @@ class Dataset(object):
         elif nlags <= 1:
             raise ValueError('Must be greater than 1')
         else:
+            self.set_return_lags(nlags)
             self.__nlags = nlags
 
     def reset_sample_data(self):
