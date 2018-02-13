@@ -28,7 +28,9 @@ class Dataset(object):
         input_data: DataFrame
             initial dataset to be used as raw data
         """
+        # raw dataset
         self.raw = input_data
+        # number of lags for logs-returns
         self.nlags = None
 
     def __str__(self):
@@ -110,3 +112,9 @@ class Dataset(object):
             if lagname not in data.columns:
                 data[lagname] = data['returns'].shift(num)
         self.sample = data.dropna()
+
+    def drop_col(self, col):
+        if type(col) != str:
+            raise ValueError('Must pass string object for column name')
+        if col in self.sample.columns:
+            self.sample.drop(col,axis=1)
