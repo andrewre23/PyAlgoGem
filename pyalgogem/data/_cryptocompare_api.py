@@ -146,6 +146,7 @@ class CryptoCompareAPI(object):
             .format(symbol.upper(), comparison_symbol.upper(), limit, aggregate)
         if exchange:
             url += '&e={}'.format(exchange)
+
         try:
             page = requests.get(url)
             df = pd.DataFrame(page.json()['Data'])
