@@ -32,13 +32,17 @@ class CryptoCompareAPI(object):
         exchange : str
             name of exchange to source from
         """
+        data = None
         url = URL_BASE + 'price?fsym={}&tsyms={}' \
             .format(symbol.upper(), ','.join(comparison_symbols).upper())
         if exchange:
             url += '&e={}'.format(exchange)
 
-        page = requests.get(url)
-        data = page.json()
+        try:
+            page = requests.get(url)
+            data = page.json()
+        except:
+            print('Error: unable to connect to Cryptocompare API')
 
         return data
 
@@ -57,6 +61,7 @@ class CryptoCompareAPI(object):
         exchange : str
             name of exchange to source from
         """
+        data = None
         url = URL_BASE + 'pricehistorical?fsym={}&tsyms={}'.format(
             symbol.upper(), ','.join(comparison_symbols).upper())
         if ts is not None and isinstance(ts, dt.datetime):
@@ -64,8 +69,11 @@ class CryptoCompareAPI(object):
         if exchange:
             url += '&e={}'.format(exchange)
 
-        page = requests.get(url)
-        data = page.json()
+        try:
+            page = requests.get(url)
+            data = page.json()
+        except:
+            print('Error: unable to connect to Cryptocompare API')
 
         return data
 
@@ -93,6 +101,7 @@ class CryptoCompareAPI(object):
         exchange : str
             name of exchange to source from
         """
+        df = None
         url = URL_BASE + 'histoday?fsym={}&tsym={}&limit={}&aggregate={}' \
             .format(symbol.upper(), comparison_symbol.upper(), limit, aggregate)
         if exchange:
@@ -100,10 +109,13 @@ class CryptoCompareAPI(object):
         if all_data:
             url += '&allData=true'
 
-        page = requests.get(url)
-        df = pd.DataFrame(page.json()['Data'])
-        df.index = [dt.datetime.fromtimestamp(d) for d in df.time]
-        df = df.drop('time', axis=1)
+        try:
+            page = requests.get(url)
+            df = pd.DataFrame(page.json()['Data'])
+            df.index = [dt.datetime.fromtimestamp(d) for d in df.time]
+            df = df.drop('time', axis=1)
+        except:
+            print('Error: unable to connect to Cryptocompare API')
 
         return df
 
@@ -129,15 +141,18 @@ class CryptoCompareAPI(object):
         exchange : str
             name of exchange to source from
         """
+        df = None
         url = URL_BASE + 'histohour?fsym={}&tsym={}&limit={}&aggregate={}' \
             .format(symbol.upper(), comparison_symbol.upper(), limit, aggregate)
         if exchange:
             url += '&e={}'.format(exchange)
-
-        page = requests.get(url)
-        df = pd.DataFrame(page.json()['Data'])
-        df.index = [dt.datetime.fromtimestamp(d) for d in df.time]
-        df = df.drop('time', axis=1)
+        try:
+            page = requests.get(url)
+            df = pd.DataFrame(page.json()['Data'])
+            df.index = [dt.datetime.fromtimestamp(d) for d in df.time]
+            df = df.drop('time', axis=1)
+        except:
+            print('Error: unable to connect to Cryptocompare API')
 
         return df
 
@@ -163,14 +178,18 @@ class CryptoCompareAPI(object):
         exchange : str
             name of exchange to source from
         """
+        df = None
         url = URL_BASE + 'histominute?fsym={}&tsym={}&limit={}&aggregate={}' \
             .format(symbol.upper(), comparison_symbol.upper(), limit, aggregate)
         if exchange:
             url += '&e={}'.format(exchange)
 
-        page = requests.get(url)
-        df = pd.DataFrame(page.json()['Data'])
-        df.index = [dt.datetime.fromtimestamp(d) for d in df.time]
-        df = df.drop('time', axis=1)
+        try:
+            page = requests.get(url)
+            df = pd.DataFrame(page.json()['Data'])
+            df.index = [dt.datetime.fromtimestamp(d) for d in df.time]
+            df = df.drop('time', axis=1)
+        except:
+            print('Error: unable to connect to Cryptocompare API')
 
         return df

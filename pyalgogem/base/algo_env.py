@@ -184,6 +184,9 @@ class AlgorithmEnvironment(object):
             hist_df = self.CC.historical_price_hourly(self.symbol)
         elif self.window == 'M':
             hist_df = self.CC.historical_price_minute(self.symbol)
+        if hist_df is None:
+            print('No data saved locally')
+            return
         old_min, old_max = data.get_minmax_daterange(self.symbol, self.file)
         # select subset of data that isn't within range of old min/max
         new_df = data.select_new_values(dataframe=hist_df, old_min=old_min, old_max=old_max)
