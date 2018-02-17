@@ -16,6 +16,32 @@ class Dataset(object):
     """
     Object to house both raw and resampled
     datasets to then be used for backtesting
+
+    Attributes
+    ==========
+    raw : DataFrame
+        raw dataset directly loaded from HDF5 file
+        -stays the same throughout use unless reloading
+        Dataset object
+    sample : DataFrame
+        sample dataset to use for training and backtesting
+    nlags : int
+        number of return lags to use in sample dataset
+        -log-returns must first be calculated
+
+    Methods
+    =======
+    reset_sample_data :
+        -reset sample dataset to a new copy of raw dataset
+    drop_col :
+        -drop columns
+    add_log_returns :
+        -add 'returns' column equal to the log-returns
+        of that day
+        -note - first data point will be dropped
+    set_return_lags :
+        -create nlags number of log-returns lags in
+        sample dataset
     """
 
     def __init__(self, input_data):

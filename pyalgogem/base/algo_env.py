@@ -69,6 +69,21 @@ class AlgorithmEnvironment(object):
         GWS : Gemini Web Socket / Streammer API Object
             object to stream (and collect) live-streamming
             data via Gemini WebSocket streaming API
+
+        Methods
+        =======
+        check_key_attributes :
+            -raise error if "key" attributes are not
+            yet set before proceeding
+            -return nothing if all attributes are OK
+            -key attributes - symbol/window/file
+        update_all_historical :
+            -load all available historical data available for
+            the currently chosen symbol and window timeframe
+            -data will be written to currently selected data file
+        read_stored_data :
+            -retrieve all (or subset) of locally-saved
+            data into Dataset object
         """
 
         # ensure valid Gemini API keys in config file
@@ -220,7 +235,7 @@ class AlgorithmEnvironment(object):
         -Can select subset of timeseries as ts object
         """
         self.check_key_attributes()
-        self.dataset = data.read_datafile(symbol=self.symbol,start=start, end=end,
+        self.dataset = data.read_datafile(symbol=self.symbol, start=start, end=end,
                                           file=self.file, all_data=all_data)
         if self.dataset is not None:
             print("Data has been loaded into 'dataset' object!")
