@@ -24,7 +24,7 @@ def append_to_datafile(symbol, data, file='data.h5'):
     file = ensure_hdf5(str(file))
 
     try:
-        with tb.open_file(file, 'a') as f:
+        with tb.open_file(file, 'a',libver='latest') as f:
             if symbol.upper() == 'BTC':
                 tseries = f.root.BTC._f_get_timeseries()
             else:
@@ -50,7 +50,7 @@ def read_datafile(symbol, start=None, end=None, file='data.h5', all_data=True):
     file = ensure_hdf5(str(file))
 
     try:
-        with tb.open_file(file, 'r') as f:
+        with tb.open_file(file, 'r',libver='latest') as f:
             if symbol.upper() == 'BTC':
                 tseries = f.root.BTC._f_get_timeseries()
             else:
@@ -73,7 +73,7 @@ def get_minmax_daterange(symbol, file='data.h5'):
     file = ensure_hdf5(str(file))
 
     try:
-        with tb.open_file(file, 'r') as f:
+        with tb.open_file(file, 'r',libver='latest') as f:
             if symbol.upper() == 'BTC':
                 tseries = f.root.BTC._f_get_timeseries()
             else:
