@@ -24,6 +24,28 @@ class GeminiAPI(object):
     """
     Wrapper class object for Retrieval of Price Data
     For Cryptocurrencies Using the CryptoCompare API
+
+    Methods
+    =======
+    send_public_request :
+    send_private_request :
+    new_order :
+    cancel_order :
+    cancel_all_session_orders :
+    cancel_all_active_orders :
+    get_order_status :
+    get_active_orders :
+    get_past_trades :
+    get_trade_volumes :
+    get_available_balances :
+    heartbeat :
+    get_symbols :
+    get_ticker :
+    get_current_order_book :
+    get_trades_history :
+    get_current_auction :
+    get_auction_history :
+    make_timestamp :
     """
 
     def __init__(self, key, secret_key, sandbox=True, debug=False):
@@ -53,7 +75,7 @@ class GeminiAPI(object):
         return requests.get(url, timeout=10).json()
 
     def send_private_request(self, method, payload):
-        """Sends all privat requests to the Gemini server"""
+        """Sends all private requests to the Gemini server"""
         payload['nonce'] = str(int(time.time() * 100000))
         payload = json.dumps(payload)
 
