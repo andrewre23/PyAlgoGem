@@ -24,13 +24,12 @@ def append_to_datafile(symbol, data, file='data.h5'):
     file = ensure_hdf5(str(file))
 
     try:
-        f = tb.open_file(file, 'a')
-        if symbol.upper() == 'BTC':
-            tseries = f.root.BTC._f_get_timeseries()
-        else:
-            tseries = f.root.ETH._f_get_timeseries()
-        tseries.append(data)
-        f.close()
+        with tb.open_file(file, 'a') as f:
+            if symbol.upper() == 'BTC':
+                tseries = f.root.BTC._f_get_timeseries()
+            else:
+                tseries = f.root.ETH._f_get_timeseries()
+            tseries.append(data)
     except:
         print("Error appending to {}".format(file))
 
@@ -74,13 +73,12 @@ def get_minmax_daterange(symbol, file='data.h5'):
     file = ensure_hdf5(str(file))
 
     try:
-        f = tb.open_file(file, 'r')
-        if symbol.upper() == 'BTC':
-            tseries = f.root.BTC._f_get_timeseries()
-        else:
-            tseries = f.root.ETH._f_get_timeseries()
-        min_date, max_date = get_minmax_timeseries(tseries)
-        f.close()
+        with tb.open_file(file, 'r') as f:
+            if symbol.upper() == 'BTC':
+                tseries = f.root.BTC._f_get_timeseries()
+            else:
+                tseries = f.root.ETH._f_get_timeseries()
+            min_date, max_date = get_minmax_timeseries(tseries)
         return min_date, max_date
     except:
         print("Error getting min-max dates from to {}".format(file))
