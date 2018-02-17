@@ -28,24 +28,43 @@ class GeminiAPI(object):
     Methods
     =======
     send_public_request :
+        sends all public requests to Gemini server
     send_private_request :
+        sends all private requests to Gemini server
     new_order :
+        create new trade order
     cancel_order :
+        cancel trade order
     cancel_all_session_orders :
+        kill all orders placed during current session
     cancel_all_active_orders :
+        kill any open active order
     get_order_status :
+        get current status of any order via order ID
     get_active_orders :
+        get all open active orders
     get_past_trades :
+        get past history of trades placed
     get_trade_volumes :
+        get current volume of trades for currencies
     get_available_balances :
+        get current available balances in your linked account
     heartbeat :
+        test if connection remains to API
     get_symbols :
+        get available symbols to trade with via Gemini
     get_ticker :
+        get current price of available currencies
     get_current_order_book :
+        get current order book on Gemini network
     get_trades_history :
+        get history of trades on Gemini
     get_current_auction :
+        get current status of exchange auction
     get_auction_history :
+        get historical data of exchange auction
     make_timestamp :
+        create timestamp to use for API calls
     """
 
     def __init__(self, key, secret_key, sandbox=True, debug=False):
