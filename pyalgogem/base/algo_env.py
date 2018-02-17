@@ -41,7 +41,6 @@ class AlgorithmEnvironment(object):
 
         Attributes
         ==========
-
         symbol : str
             symbol of currency to be used - must be
             -BTC : Bitcoin
@@ -55,6 +54,21 @@ class AlgorithmEnvironment(object):
             name of datafile to be used by environment
             on update: creates new HDF5 file in CWD
                 with same name
+
+        Objects
+        =======
+        dataset : Dataset object
+            Dataset object that contains raw and
+            sampled dataset for training/backtesting
+        CC : Cryptocompare API object
+            object to retrieve data from
+            Cryptocompare REST API
+        GEM : Gemini API Communication Object
+            object to retrieve data and place
+            orders via Gemini REST API
+        GWS : Gemini Web Socket / Streammer API Object
+            object to stream (and collect) live-streamming
+            data via Gemini WebSocket streaming API
         """
 
         # ensure valid Gemini API keys in config file
@@ -84,8 +98,8 @@ class AlgorithmEnvironment(object):
 
         # create API objects for Cryptocompare and Gemini
         self.CC = data.CryptoCompareAPI()
-        self.GEMINI = deploy.GeminiAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
-        self.GSTREAM = deploy.GeminiStreamAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
+        self.GEM = deploy.GeminiAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
+        self.GWS = deploy.GeminiStreamAPI(self.__key, self.__secret_key, self.sandbox, self.__debug)
 
     @property
     def sandbox(self):
