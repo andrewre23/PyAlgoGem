@@ -116,6 +116,12 @@ class Dataset(object):
         else:
             self.sample = self.raw.copy()
 
+    def drop_col(self, col):
+        if type(col) != str:
+            raise ValueError('Must pass string object for column name')
+        if col in self.sample.columns:
+            self.sample.drop(col, axis=1)
+
     def add_log_returns(self):
         """Add log-returns column to sampled dataset"""
         self.reset_sample_data()
@@ -138,9 +144,3 @@ class Dataset(object):
             if lagname not in data.columns:
                 data[lagname] = data['returns'].shift(num)
         self.sample = data.dropna()
-
-    def drop_col(self, col):
-        if type(col) != str:
-            raise ValueError('Must pass string object for column name')
-        if col in self.sample.columns:
-            self.sample.drop(col,axis=1)
