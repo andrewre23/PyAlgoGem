@@ -25,9 +25,10 @@ class Dataset(object):
         Dataset object
     sample : DataFrame
         sample dataset to use for training and backtesting
-    nlags : int
+    numlags : int
         number of return lags to use in sample dataset
         -log-returns must first be calculated
+
 
     Methods
     =======
@@ -40,7 +41,7 @@ class Dataset(object):
         of that day
         -note - first data point will be dropped
     set_return_lags :
-        -create nlags number of log-returns lags in
+        -create numlags number of log-returns lags in
         sample dataset
     """
 
@@ -57,7 +58,7 @@ class Dataset(object):
         # raw dataset
         self.raw = input_data
         # number of lags for logs-returns
-        self.nlags = None
+        self.numlags = None
 
     def __str__(self):
         """When printing, print sample dataset"""
@@ -93,21 +94,21 @@ class Dataset(object):
             raise ValueError('Must be Pandas DataFrame object')
 
     @property
-    def nlags(self):
+    def numlags(self):
         """Number of lags to have in sample data"""
-        return self.__nlags
+        return self.__numlags
 
-    @nlags.setter
-    def nlags(self, nlags):
-        if nlags is None:
-            self.__nlags = None
-        elif type(nlags) != int:
+    @numlags.setter
+    def numlags(self, numlags):
+        if numlags is None:
+            self.__numlags = None
+        elif type(numlags) != int:
             raise ValueError('Must be an integer value')
-        elif nlags <= 1:
+        elif numlags <= 1:
             raise ValueError('Must be greater than 1')
         else:
-            self.set_return_lags(nlags)
-            self.__nlags = nlags
+            self.set_return_lags(numlags)
+            self.__numlags = numlags
 
     def reset_sample_data(self):
         """Resets sample data to match raw dataset"""
@@ -128,17 +129,17 @@ class Dataset(object):
         data = self.sample
         data['returns'] = log(data['close'] / data['close'].shift(1))
         self.sample = data.dropna()
-        self.nlags = None
+        self.numlags = None
 
-    def set_return_lags(self, nlags):
+    def set_return_lags(self, numlags):
         """Add n-lags to DataFrame"""
-        if not (type(nlags) == int and nlags > 1):
+        if not (type(numlags) == int and numlags > 1):
             raise ValueError('Must have more than one lag')
-        if nlags > len(self.sample) + 1:
+        if numlags > len(self.sample) + 1:
             raise ValueError('Must have less lags than length of sample dataset')
         self.add_log_returns()
         data = self.sample
-        for i in range(nlags):
+        for i in range(numlags):
             num = i + 1
             lagname = 'returns_{}'.format(num)
             if lagname not in data.columns:
