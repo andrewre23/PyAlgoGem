@@ -28,11 +28,13 @@ class Dataset(object):
     numlags : int
         number of return lags to use in sample dataset
         -log-returns must first be calculated
-
+    newcols : list of strings (private)
+        list of columns found in sample dataset that
+        are not a part of the raw dataset
 
     Methods
     =======
-    reset_sample_data :
+    reset :
         -reset sample dataset to a new copy of raw dataset
     drop_col :
         -drop columns
@@ -59,6 +61,8 @@ class Dataset(object):
         self.raw = input_data
         # number of lags for logs-returns
         self.numlags = None
+        # names of columns not in original raw dataset
+        self.__newcols = set()
 
     def __str__(self):
         """When printing, print sample dataset"""
@@ -90,6 +94,8 @@ class Dataset(object):
         if new_sample is None or \
                 isinstance(new_sample, DataFrame):
             self.__sample = new_sample
+            self.__newcols = set()
+            self.numlags = None
         else:
             raise ValueError('Must be Pandas DataFrame object')
 
@@ -110,7 +116,7 @@ class Dataset(object):
             self.set_return_lags(numlags)
             self.__numlags = numlags
 
-    def reset_sample_data(self):
+    def reset(self):
         """Resets sample data to match raw dataset"""
         if self.raw is None:
             self.sample = None
@@ -118,18 +124,45 @@ class Dataset(object):
             self.sample = self.raw.copy()
 
     def drop_col(self, col):
-        if type(col) != str:
-            raise ValueError('Must pass string object for column name')
-        if col in self.sample.columns:
-            self.sample.drop(col, axis=1)
+        # case where list is passed
+        if type(col) == list:
+            if len(col) == 0:
+                raise ValueError('Cannot pass empty list')
+            else:
+                for name in col:
+                    # iterate to check if valid string objects before operating
+                    if type(name) != str:
+                        raise ValueError('List can only contain strings')
+                for name in col:
+                    if name in self.sample.columns:
+                        self.sample.drop(name, axis=1, inplace=True)
+                        if name in self.__newcols:
+                            self.__newcols.remove(name)
+        # case where string is passed
+        elif type(col) == str:
+            if col in self.sample.columns:
+                self.sample.drop(col, axis=1, inplace=True)
+                if col in self.__newcols:
+                    self.__newcols.remove(col)
+        else:
+            raise ValueError('Must pass string or list of strings for column to drop')
+
+    def drop_ohlc_prices(self):
+        # drop open/high/low/close prices from sample dataset
+        self.drop_col(['close', 'high', 'low', 'open'])
+
+    def drop_volume_data(self):
+        # drop open/high/low/close prices from sample dataset
+        self.drop_col(['vol_to', 'vol_from'])
 
     def add_log_returns(self):
         """Add log-returns column to sampled dataset"""
-        self.reset_sample_data()
+        self.reset()
         data = self.sample
         data['returns'] = log(data['close'] / data['close'].shift(1))
         self.sample = data.dropna()
         self.numlags = None
+        self.__newcols.add('returns')
 
     def set_return_lags(self, numlags):
         """Add n-lags to DataFrame"""
@@ -137,11 +170,25 @@ class Dataset(object):
             raise ValueError('Must have more than one lag')
         if numlags > len(self.sample) + 1:
             raise ValueError('Must have less lags than length of sample dataset')
-        self.add_log_returns()
+        # create 'returns' column if not already there
+        if 'returns' not in self.sample.columns:
+            # only return columns that are currently in sample dataset
+            orig_cols = self.sample.columns
+            self.add_log_returns()
+            for col in self.sample.columns:
+                if col not in orig_cols:
+                    self.drop_col(col)
         data = self.sample
         for i in range(numlags):
             num = i + 1
-            lagname = 'returns_{}'.format(num)
+            if len(str(numlags)) == 2:
+                lagname = 'returns_{:02d}'.format(num)
+            elif len(str(numlags)) == 3:
+                lagname = 'returns_{:03d}'.format(num)
+            else:
+                lagname = 'returns_{}'.format(num)
             if lagname not in data.columns:
                 data[lagname] = data['returns'].shift(num)
+                self.__newcols.add(lagname)
         self.sample = data.dropna()
+        self.__newcols = set(self.sample.columns)
