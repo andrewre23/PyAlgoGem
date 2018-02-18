@@ -236,6 +236,8 @@ class AlgorithmEnvironment(object):
         from CryptoCompare for both symbols and
         append missing values to currently-selected data-file
         """
+        if self.window is None:
+            raise ValueError('Must have a valid window selected')
         old_symbol = self.symbol
         for symbol in SYMBOLS:
             self.symbol = symbol
