@@ -161,9 +161,29 @@ class Dataset(object):
         self.sample = data.dropna()
         self.__newcols = set(self.sample.columns)
 
-    def add_sma(self, SMA):
+    def add_sma(self, sma):
         """Add SMA vector of log-returns"""
-        pass
+        if not type(sma) == int:
+            raise ValueError('Must pass integer for SMA')
+        if sma <= 1:
+            raise ValueError('SMA must be at least 2 units')
+        if sma > len(self.sample):
+            raise ValueError("SMA can't be greater than length of sample data")
+        # create 'returns' column if not already there
+        if 'returns' not in self.sample.columns:
+            # only return columns that are currently in sample dataset
+            orig_cols = self.sample.columns
+            self.add_log_returns()
+            for col in self.sample.columns:
+                if col not in orig_cols:
+                    self.drop_col(col)
+        data = self.sample
+        smaname = 'sma_{:02d}'.format(sma)
+        if smaname not in data.columns:
+            data[smaname] = data['returns'].rolling(sma).mean()
+            self.__newcols.add(smaname)
+        self.sample = data.dropna()
+        self.__newcols = set(self.sample.columns)
 
     def reset(self):
         """Resets sample data to match raw dataset"""
