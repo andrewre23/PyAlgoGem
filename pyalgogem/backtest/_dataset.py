@@ -135,7 +135,7 @@ class Dataset(object):
                         raise ValueError('List can only contain strings')
                 for name in col:
                     if name in self.sample.columns:
-                        self.sample.drop(name, axis=1, inplace=True)
+                        self.drop_col(name)
                         if name in self.__newcols:
                             self.__newcols.remove(name)
         # case where string is passed
