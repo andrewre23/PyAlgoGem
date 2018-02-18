@@ -20,6 +20,8 @@ import configparser
 config = configparser.ConfigParser()
 config.read('my_keys.cfg')
 
+SYMBOLS = ['BTC', 'ETH']
+
 
 class AlgorithmEnvironment(object):
     """
@@ -144,7 +146,7 @@ class AlgorithmEnvironment(object):
         symbol_str = str(new_symbol)
         if new_symbol is None:
             self.__symbol = new_symbol
-        elif symbol_str.upper() not in ['BTC', 'ETH']:
+        elif symbol_str.upper() not in SYMBOLS:
             raise ValueError("Symbol must be BTC or ETH")
         else:
             self.__symbol = new_symbol.upper()
@@ -199,13 +201,13 @@ class AlgorithmEnvironment(object):
         else:
             return
 
-    def update_all_historical(self):
+    def update_historical(self):
         """
         Retrieve all possible available daily
         from CryptoCompare and append missing values
         to currently-selected data-file
         """
-        #self.check_key_attributes()
+        self.check_key_attributes()
         hist_df = None
         if self.window == 'D':
             hist_df = self.CC.historical_price_daily(self.symbol)
@@ -227,6 +229,18 @@ class AlgorithmEnvironment(object):
             data.append_to_datafile(symbol=self.symbol, data=new_df)
             print('All available historical data for {} has been successfully loaded!'.
                   format(self.symbol))
+
+    def update_historical_all(self):
+        """
+        Retrieve all possible available daily
+        from CryptoCompare for both symbols and
+        append missing values to currently-selected data-file
+        """
+        old_symbol = self.symbol
+        for symbol in SYMBOLS:
+            self.symbol = symbol
+            self.update_historical()
+        self.symbol = old_symbol
 
     def read_stored_data(self, start=None, end=None, all_data=True):
         """
