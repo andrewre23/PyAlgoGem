@@ -1,6 +1,6 @@
 #
 # PyAlgoGem Project
-# base/
+# base/algorithm_environment
 #
 # main module containing AlgorithmEnvironment object
 #
@@ -205,7 +205,7 @@ class AlgorithmEnvironment(object):
         from CryptoCompare and append missing values
         to currently-selected data-file
         """
-        self.check_key_attributes()
+        #self.check_key_attributes()
         hist_df = None
         if self.window == 'D':
             hist_df = self.CC.historical_price_daily(self.symbol)

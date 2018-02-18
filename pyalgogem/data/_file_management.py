@@ -12,7 +12,7 @@ import shutil
 import tables as tb
 import tstables as ts
 
-from ._data_helpers import ensure_hdf5
+from ._helper_functions import ensure_hdf5
 
 
 class CryptoCompareTable(tb.IsDescription):

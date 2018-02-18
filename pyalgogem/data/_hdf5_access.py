@@ -12,7 +12,7 @@ import tstables as ts
 
 from pandas import DataFrame
 
-from ._data_helpers import ensure_datetime, ensure_hdf5, get_minmax_timeseries
+from ._helper_functions import ensure_datetime, ensure_hdf5, get_minmax_timeseries
 
 
 def append_to_datafile(symbol, data, file='data.h5'):
