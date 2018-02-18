@@ -34,10 +34,6 @@ class Dataset(object):
 
     Methods
     =======
-    reset :
-        -reset sample dataset to a new copy of raw dataset
-    drop_col :
-        -drop columns
     add_log_returns :
         -add 'returns' column equal to the log-returns
         of that day
@@ -45,6 +41,17 @@ class Dataset(object):
     set_return_lags :
         -create numlags number of log-returns lags in
         sample dataset
+    add_sma :
+        -add short-term moving-averages of log returns
+        based on SMA parameter
+    reset :
+        -reset sample dataset to a new copy of raw dataset
+    drop_col :
+        -drop columns
+    drop_ohlc_prices "
+        -drop open/high/low/close columns from sample dataset
+    drop_volume_data :
+        -open volume to/from columns from sample dataset
     """
 
     def __init__(self, input_data):
@@ -116,6 +123,48 @@ class Dataset(object):
             self.set_return_lags(numlags)
             self.__numlags = numlags
 
+    def add_log_returns(self):
+        """Add log-returns column to sampled dataset"""
+        self.reset()
+        data = self.sample
+        data['returns'] = log(data['close'] / data['close'].shift(1))
+        self.sample = data.dropna()
+        self.numlags = None
+        self.__newcols.add('returns')
+
+    def set_return_lags(self, numlags):
+        """Add n-lags to DataFrame"""
+        if not (type(numlags) == int and numlags > 1):
+            raise ValueError('Must have more than one lag')
+        if numlags > len(self.sample) + 1:
+            raise ValueError('Must have less lags than length of sample dataset')
+        # create 'returns' column if not already there
+        if 'returns' not in self.sample.columns:
+            # only return columns that are currently in sample dataset
+            orig_cols = self.sample.columns
+            self.add_log_returns()
+            for col in self.sample.columns:
+                if col not in orig_cols:
+                    self.drop_col(col)
+        data = self.sample
+        for i in range(numlags):
+            num = i + 1
+            if len(str(numlags)) == 2:
+                lagname = 'returns_{:02d}'.format(num)
+            elif len(str(numlags)) == 3:
+                lagname = 'returns_{:03d}'.format(num)
+            else:
+                lagname = 'returns_{}'.format(num)
+            if lagname not in data.columns:
+                data[lagname] = data['returns'].shift(num)
+                self.__newcols.add(lagname)
+        self.sample = data.dropna()
+        self.__newcols = set(self.sample.columns)
+
+    def add_sma(self, SMA):
+        """Add SMA vector of log-returns"""
+        pass
+
     def reset(self):
         """Resets sample data to match raw dataset"""
         if self.raw is None:
@@ -154,41 +203,3 @@ class Dataset(object):
     def drop_volume_data(self):
         # drop open/high/low/close prices from sample dataset
         self.drop_col(['vol_to', 'vol_from'])
-
-    def add_log_returns(self):
-        """Add log-returns column to sampled dataset"""
-        self.reset()
-        data = self.sample
-        data['returns'] = log(data['close'] / data['close'].shift(1))
-        self.sample = data.dropna()
-        self.numlags = None
-        self.__newcols.add('returns')
-
-    def set_return_lags(self, numlags):
-        """Add n-lags to DataFrame"""
-        if not (type(numlags) == int and numlags > 1):
-            raise ValueError('Must have more than one lag')
-        if numlags > len(self.sample) + 1:
-            raise ValueError('Must have less lags than length of sample dataset')
-        # create 'returns' column if not already there
-        if 'returns' not in self.sample.columns:
-            # only return columns that are currently in sample dataset
-            orig_cols = self.sample.columns
-            self.add_log_returns()
-            for col in self.sample.columns:
-                if col not in orig_cols:
-                    self.drop_col(col)
-        data = self.sample
-        for i in range(numlags):
-            num = i + 1
-            if len(str(numlags)) == 2:
-                lagname = 'returns_{:02d}'.format(num)
-            elif len(str(numlags)) == 3:
-                lagname = 'returns_{:03d}'.format(num)
-            else:
-                lagname = 'returns_{}'.format(num)
-            if lagname not in data.columns:
-                data[lagname] = data['returns'].shift(num)
-                self.__newcols.add(lagname)
-        self.sample = data.dropna()
-        self.__newcols = set(self.sample.columns)
