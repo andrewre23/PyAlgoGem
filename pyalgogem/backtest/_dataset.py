@@ -136,9 +136,11 @@ class Dataset(object):
 
     def set_return_lags(self, numlags):
         """Add n-lags to DataFrame"""
-        if not (type(numlags) == int and numlags > 1):
+        if not (type(numlags) == int):
+            raise ValueError('Must pass int object')
+        elif  numlags <= 1:
             raise ValueError('Must have more than one lag')
-        if numlags > len(self.sample) + 1:
+        elif numlags > len(self.sample) + 1:
             raise ValueError('Must have less lags than length of sample dataset')
         # create 'returns' column if not already there
         self.ensure_log_returns()
