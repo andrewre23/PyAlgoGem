@@ -44,7 +44,7 @@ class Dataset(object):
     add_sma :
         -add short-term moving-averages of log returns
         based on SMA parameter
-    reset :
+    initialize_sample_data :
         -reset sample dataset to a new copy of raw dataset
     drop_col :
         -drop columns
@@ -85,9 +85,7 @@ class Dataset(object):
         if new_raw is None or \
                 isinstance(new_raw, DataFrame):
             self.__raw = new_raw
-            self.sample = new_raw
-            if self.sample is not None:
-                self.add_log_returns()
+            self.initialize_sample_data()
         else:
             raise ValueError('Must be Pandas DataFrame object')
 
@@ -101,8 +99,7 @@ class Dataset(object):
         if new_sample is None or \
                 isinstance(new_sample, DataFrame):
             self.__sample = new_sample
-            self.__newcols = set()
-            self.numlags = None
+            self.update_newcols()
         else:
             raise ValueError('Must be Pandas DataFrame object')
 
@@ -120,15 +117,20 @@ class Dataset(object):
         elif numlags <= 1:
             raise ValueError('Must be greater than 1')
         else:
-            self.set_return_lags(numlags)
             self.__numlags = numlags
+
+    def initialize_sample_data(self):
+        """Resets sample data to match raw dataset"""
+        if self.raw is None:
+            self.sample = None
+        else:
+            self.sample = self.raw.copy()
 
     def add_log_returns(self):
         """Add log-returns column to sampled dataset"""
-        self.reset()
-        data = self.sample
-        data['returns'] = log(data['close'] / data['close'].shift(1))
-        self.sample = data.dropna()
+        data = self.raw.copy()
+        log_rets = log(data['close'] / data['close'].shift(1))
+        self.add_column('returns', log_rets)
         self.numlags = None
         self.__newcols.add('returns')
 
@@ -139,27 +141,15 @@ class Dataset(object):
         if numlags > len(self.sample) + 1:
             raise ValueError('Must have less lags than length of sample dataset')
         # create 'returns' column if not already there
-        if 'returns' not in self.sample.columns:
-            # only return columns that are currently in sample dataset
-            orig_cols = self.sample.columns
-            self.add_log_returns()
-            for col in self.sample.columns:
-                if col not in orig_cols:
-                    self.drop_col(col)
-        data = self.sample
+        self.ensure_log_returns()
         for i in range(numlags):
             num = i + 1
-            if len(str(numlags)) == 2:
-                lagname = 'returns_{:02d}'.format(num)
-            elif len(str(numlags)) == 3:
-                lagname = 'returns_{:03d}'.format(num)
-            else:
-                lagname = 'returns_{}'.format(num)
-            if lagname not in data.columns:
-                data[lagname] = data['returns'].shift(num)
-                self.__newcols.add(lagname)
-        self.sample = data.dropna()
-        self.__newcols = set(self.sample.columns)
+            lagname = 'returns_{}'.format(num)
+            self.add_column(lagname, self.sample['returns'].shift(num))
+        if self.numlags and numlags < self.numlags:
+            for lag in range(self.numlags - numlags):
+                self.drop_col('returns_{}'.format(lag + numlags + 1))
+        self.numlags = numlags
 
     def add_sma(self, sma):
         """Add SMA vector of log-returns"""
@@ -170,27 +160,28 @@ class Dataset(object):
         if sma > len(self.sample):
             raise ValueError("SMA can't be greater than length of sample data")
         # create 'returns' column if not already there
-        if 'returns' not in self.sample.columns:
-            # only return columns that are currently in sample dataset
-            orig_cols = self.sample.columns
-            self.add_log_returns()
-            for col in self.sample.columns:
-                if col not in orig_cols:
-                    self.drop_col(col)
-        data = self.sample
-        smaname = 'sma_{:02d}'.format(sma)
-        if smaname not in data.columns:
-            data[smaname] = data['returns'].rolling(sma).mean()
-            self.__newcols.add(smaname)
-        self.sample = data.dropna()
-        self.__newcols = set(self.sample.columns)
+        self.ensure_log_returns()
+        smaname = 'sma_{}'.format(sma)
+        self.add_column(smaname, self.sample['returns'].rolling(sma).mean())
 
-    def reset(self):
-        """Resets sample data to match raw dataset"""
-        if self.raw is None:
-            self.sample = None
-        else:
-            self.sample = self.raw.copy()
+    def add_sma_std(self, sma):
+        """Add SMA vector of std-dev of log-returns"""
+        if not type(sma) == int:
+            raise ValueError('Must pass integer for SMA')
+        if sma <= 1:
+            raise ValueError('SMA must be at least 2 units')
+        if sma > len(self.sample):
+            raise ValueError("SMA can't be greater than length of sample data")
+        # create 'returns' column if not already there
+        self.ensure_log_returns()
+        smaname = 'sma_std_{}'.format(sma)
+        self.add_column(smaname, self.sample['returns'].rolling(sma).std())
+
+    def add_column(self, name, data):
+        """Add parameterized function to sample dataset"""
+        if name not in self.sample.columns:
+            self.sample[name] = self.select_matching_sample(data)
+        self.update_newcols()
 
     def drop_col(self, col):
         # case where list is passed
@@ -217,9 +208,40 @@ class Dataset(object):
             raise ValueError('Must pass string or list of strings for column to drop')
 
     def drop_ohlc_prices(self):
-        # drop open/high/low/close prices from sample dataset
+        """Drop open/high/low/close prices from sample dataset"""
         self.drop_col(['close', 'high', 'low', 'open'])
 
     def drop_volume_data(self):
-        # drop open/high/low/close prices from sample dataset
+        """Drop open/high/low/close prices from sample dataset"""
         self.drop_col(['vol_to', 'vol_from'])
+
+    def ensure_log_returns(self):
+        """Ensure 'returns' is present in sample data"""
+        if 'returns' not in self.sample.columns:
+            self.add_log_returns()
+
+    def select_matching_sample(self, input_df):
+        """Returns sections of input_df that
+        are currently present in sample dataset index"""
+        if self.sample is None:
+            raise ValueError('Nothing currently in sample')
+        sample_index = self.sample.index
+        return_df = None
+        try:
+            return_df = input_df.loc[sample_index]
+        except KeyError:
+            print('Error: no overlapping dates with sample dataset')
+        return return_df
+
+    def update_newcols(self):
+        """Updates newcols hidden attributes"""
+        self.__newcols = set()
+        if self.sample is None: return
+        for name in self.sample.columns:
+            if name not in self.raw.columns:
+                self.__newcols.add(name)
+
+    def remove_na(self):
+        """Remove all NAs from sample dataset"""
+        if self.sample is not None:
+            self.sample.dropna(inplace=True)
