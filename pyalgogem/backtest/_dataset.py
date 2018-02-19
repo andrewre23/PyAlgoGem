@@ -34,6 +34,8 @@ class Dataset(object):
 
     Methods
     =======
+    initialize_sample_data :
+        -resets sample data to match the raw dataset
     add_log_returns :
         -add 'returns' column equal to the log-returns
         of that day
@@ -42,16 +44,33 @@ class Dataset(object):
         -create numlags number of log-returns lags in
         sample dataset
     add_sma :
-        -add short-term moving-averages of log returns
+        -add short-term moving-averages of log-returns
         based on SMA parameter
-    initialize_sample_data :
-        -reset sample dataset to a new copy of raw dataset
+    add_sma_std :
+        -add short-term moving-average of std of log-returns
+        based on SMA parameter
+    add_col :
+        -add column to sample dataset if not already in columns
+        and update private newcols attributes
     drop_col :
-        -drop columns
-    drop_ohlc_prices "
+        -drop column or columns passed as arguments
+    drop_ohlc_prices :
         -drop open/high/low/close columns from sample dataset
     drop_volume_data :
         -open volume to/from columns from sample dataset
+    ensure_log_returns :
+        -create 'returns' column if not already present in sample
+    select_matching_sample :
+        -pass a DataFrame or Series object and function will return
+        a column the same length as the sample object with values present
+        where indicies match, and NA elsewhere
+    update_newcols :
+        -updates newcols attribute to those present columns not found in
+        raw datatset
+    remove_na :
+        -remove all NA values from sample dataset
+        -note : be sure you are reay to drop values, as no way to
+        recover without recreating sample dataset from raw dataset
     """
 
     def __init__(self, input_data):
@@ -138,7 +157,7 @@ class Dataset(object):
         """Add n-lags to DataFrame"""
         if not (type(numlags) == int):
             raise ValueError('Must pass int object')
-        elif  numlags <= 1:
+        elif numlags <= 1:
             raise ValueError('Must have more than one lag')
         elif numlags > len(self.sample) + 1:
             raise ValueError('Must have less lags than length of sample dataset')
