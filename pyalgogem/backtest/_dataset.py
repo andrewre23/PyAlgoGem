@@ -198,6 +198,20 @@ class Dataset(object):
         smaname = 'sma_std_{}'.format(sma)
         self.add_column(smaname, self.sample['returns'].rolling(sma).std())
 
+    def add_exponential_smoothing(self, alpha):
+        """Add exponential smoothing vector of log-returns"""
+        if not type(alpha) == int:
+            raise ValueError('Must pass integer for Alpha')
+        if alpha <= 0:
+            raise ValueError('Alpha must be greater than 0')
+        if alpha > 1:
+            raise ValueError('Alpha must be no greater than 1')
+        # create 'returns' column if not already there
+        self.ensure_log_returns()
+        alphaname = 'alpha_{}'.format(alpha)
+        self.add_column(alphaname, self.sample['returns'].ewm(alpha=alpha).mean())
+
+
     def add_column(self, name, data):
         """Add parameterized function to sample dataset"""
         if name not in self.sample.columns:
