@@ -200,12 +200,8 @@ class Dataset(object):
 
     def add_exponential_smoothing(self, alpha):
         """Add exponential smoothing vector of log-returns"""
-        if not type(alpha) == int:
-            raise ValueError('Must pass integer for Alpha')
-        if alpha <= 0:
-            raise ValueError('Alpha must be greater than 0')
-        if alpha > 1:
-            raise ValueError('Alpha must be no greater than 1')
+        if not (0 < alpha <= 1):
+            raise ValueError('Alpha must be in (0,1]')
         # create 'returns' column if not already there
         self.ensure_log_returns()
         alphaname = 'alpha_{}'.format(alpha)
