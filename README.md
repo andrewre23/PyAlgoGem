@@ -56,13 +56,13 @@ import pyalgogem as pag
 
 -Initialize algorithm environment object to house code
 
-ae = pag.AlgorithmEnvironment()
+>>> ae = pag.AlgorithmEnvironment()
 
 ### Set up parameters
 
 -Select ae.symbol ('BTC'/'ETH') and ae.window ('D'/'H'/'M' - daily/hour/minute)
 
-ae.symbol = 'ETH'; ae.window = 'D' 
+>>> ae.symbol = 'ETH'; ae.window = 'D' 
 
 ## Data
 Retrieving and saving historical data from CryptoCompare
@@ -71,11 +71,11 @@ Retrieving and saving historical data from CryptoCompare
 
 --Can pass datetime objects for start/end of timeslice
 
-ae.update_all_historical()
+>>> ae.update_all_historical()
 
 ### Read data into Dataset object
 
-ae.read_stored_data()
+>>> ae.read_stored_data()
 
 Now, dataset object (ae.dataset) created to house data
 
@@ -84,9 +84,9 @@ Testing hypotheses and training Machine Learning models on historical data
 ### Log-returns
 -Add log-returns of close-price to sample data
 
-ae.dataset.add_log_returns()
+>>> ae.dataset.add_log_returns()
 
 ### Lags
 -Add lags of log-returns to sample data
 
-ae.dataset.set_return_lags(15)
+>>> ae.dataset.set_return_lags(15)
