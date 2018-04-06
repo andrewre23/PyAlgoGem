@@ -260,7 +260,12 @@ class AlgorithmEnvironment(object):
         """
         Create a new strategy object
         to begin building your algorithm
+
+        Returns
+        =======
         return : strategy
             Strategy object
         """
-        return strategy.Strategy()
+        if self.dataset is None:
+            self.read_stored_data()
+        return strategy.Strategy(self.dataset)
