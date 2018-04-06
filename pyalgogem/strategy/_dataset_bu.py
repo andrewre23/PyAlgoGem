@@ -1,6 +1,6 @@
 #
 # PyAlgoGem Project
-# backtest/dataset_bu
+# strategy/dataset_bu
 #
 # class definition for Dataset object
 #
