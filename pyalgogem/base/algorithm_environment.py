@@ -107,7 +107,7 @@ class AlgorithmEnvironment(object):
 
         # set initial algorithm attributes
         self.symbol = None
-        self.window = None
+        self.window = 'D'
 
         # set data attributes
         self.dataset = None
