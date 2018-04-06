@@ -9,9 +9,9 @@
 
 
 import pyalgogem.data as data
-import pyalgogem.backtest as backtest
 import pyalgogem.deploy as deploy
 import pyalgogem.performance as performance
+import pyalgogem.strategy as strategy
 
 from pandas import DataFrame
 
@@ -175,7 +175,7 @@ class AlgorithmEnvironment(object):
     def dataset(self, new_dataset):
         if new_dataset is None or \
                 isinstance(new_dataset, DataFrame):
-            self.__dataset = backtest.Dataset(new_dataset)
+            self.__dataset = strategy.Dataset(new_dataset)
         else:
             raise ValueError('Must be Pandas DataFrame object or None')
 
@@ -255,3 +255,12 @@ class AlgorithmEnvironment(object):
                                           file=self.file, all_data=all_data)
         if self.dataset is not None:
             print("Data has been loaded into 'dataset' object!")
+
+    def new_strategy(self):
+        """
+        Create a new strategy object
+        to begin building your algorithm
+        return : strategy
+            Strategy object
+        """
+        return strategy.Strategy()

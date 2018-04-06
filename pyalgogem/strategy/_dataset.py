@@ -22,7 +22,10 @@ class Dataset(object):
     raw : DataFrame
         raw dataset directly loaded from HDF5 file
         -stays the same throughout use unless reloading
-        Dataset object
+        Dataset
+    returns : DataFrame
+        dataset containing log-returns of instrument
+        -length len(raw)- 1
     sample : DataFrame
         sample dataset to use for training and backtesting
     numlags : int
@@ -104,6 +107,20 @@ class Dataset(object):
         if new_raw is None or \
                 isinstance(new_raw, DataFrame):
             self.__raw = new_raw
+            self.initialize_sample_data()
+        else:
+            raise ValueError('Must be Pandas DataFrame object')
+
+    @property
+    def returns(self):
+        """Returns dataset from raw sample"""
+        return self.__returns
+
+    @returns.setter
+    def returns(self, new_returns):
+        if new_returns is None or \
+                isinstance(new_returns, DataFrame):
+            self.__returns = new_returns
             self.initialize_sample_data()
         else:
             raise ValueError('Must be Pandas DataFrame object')

@@ -1,6 +1,6 @@
 #
 # PyAlgoGem Project
-# backtest/
+# strategy/
 #
 #
 #
@@ -8,3 +8,4 @@
 #
 
 from ._dataset import Dataset
+from ._strategy import Strategy
