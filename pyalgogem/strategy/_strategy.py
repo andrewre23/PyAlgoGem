@@ -36,7 +36,3 @@ class Strategy(object):
         else:
             raise ValueError('Must be Pandas DataFrame object or None')
 
-    def set_date_range(self):
-        """Define date range for strategy"""
-        pass
-
