@@ -22,6 +22,7 @@ class Strategy(object):
         data and models needed for developing strategies
         """
         self.dataset = dataset
+        self.signals = DataFrame()
 
     @property
     def dataset(self):
@@ -48,3 +49,4 @@ class Strategy(object):
             self.__signals = new_signals
         else:
             raise ValueError('Must be Pandas DataFrame object or None')
+
