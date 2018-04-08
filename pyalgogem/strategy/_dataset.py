@@ -9,7 +9,6 @@
 
 from numpy import log
 from pandas import DataFrame
-from sklearn.preprocessing import label
 
 
 class Dataset(object):

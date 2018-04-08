@@ -7,9 +7,6 @@
 # Andrew Edmonds - 2018
 #
 
-
-
-
 class IndicatorBase(object):
     """
     Base object to create and backtest trading signal
@@ -24,7 +21,7 @@ class IndicatorBase(object):
 
     """
 
-    def __init__(self):
+    def __init__(self,dataset):
         """
         Creates container environment to create and backtest
         trading signal or predictor easily at the CLI
@@ -34,13 +31,27 @@ class IndicatorBase(object):
         dataset : Dataset
             object to house dataset used for testing
         """
+        self.dataset = dataset
+
+    @property
+    def dataset(self):
+        """Object to house raw and sampled data"""
+        return self.__dataset
+
+    @dataset.setter
+    def dataset(self, new_dataset):
+        if new_dataset is None or \
+                isinstance(new_dataset, Dataset):
+            self.__dataset = new_dataset
+        else:
+            raise ValueError('Must be Dataset object or None')
 
 
 class IndicatorSMA(IndicatorBase):
     """
     SMA Indicator object
     """
-    def __init__(self, dataset, SMA1 = None, SMA2 = None):
+    def __init__(self, SMA1 = None, SMA2 = None):
         """
         Create SMA Indicator object
         """
