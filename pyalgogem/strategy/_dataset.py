@@ -49,7 +49,7 @@ class Dataset(object):
 
     def __str__(self):
         """When printing, print sample dataset"""
-        return self.sample.__str__()
+        return self.raw.__str__()
 
     @property
     def raw(self):
