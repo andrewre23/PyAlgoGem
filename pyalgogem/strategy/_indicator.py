@@ -7,6 +7,8 @@
 # Andrew Edmonds - 2018
 #
 
+from ._strategy import Dataset
+
 class IndicatorBase(object):
     """
     Base object to create and backtest trading signal
