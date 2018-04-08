@@ -8,9 +8,6 @@
 #
 
 
-from numpy import log
-from pandas import DataFrame
-from sklearn.preprocessing import label
 
 
 class IndicatorBase(object):
@@ -34,5 +31,17 @@ class IndicatorBase(object):
 
         Parameters
         ==========
-
+        dataset : Dataset
+            object to house dataset used for testing
         """
+
+
+class IndicatorSMA(IndicatorBase):
+    """
+    SMA Indicator object
+    """
+    def __init__(self, dataset, SMA1 = None, SMA2 = None):
+        """
+        Create SMA Indicator object
+        """
+        pass

@@ -8,6 +8,7 @@
 #
 
 from pyalgogem.strategy import Dataset
+from pyalgogem.strategy import IndicatorSMA
 
 from pandas import DataFrame
 
@@ -50,3 +51,6 @@ class Strategy(object):
         else:
             raise ValueError('Must be Pandas DataFrame object or None')
 
+    def new_sma_indicator(self, SMA1 = None, SMA2 = None):
+        """Create SMA Indicator variable to test on Dataset"""
+        return IndicatorSMA(dataset=self.dataset, SMA1=SMA1, SMA2=SMA2)

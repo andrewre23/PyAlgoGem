@@ -8,4 +8,5 @@
 #
 
 from ._dataset import Dataset
+from ._indicator import IndicatorSMA
 from ._strategy import Strategy
