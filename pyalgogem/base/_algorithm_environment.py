@@ -83,9 +83,17 @@ class AlgorithmEnvironment(object):
             -load all available historical data available for
             the currently chosen symbol and window timeframe
             -data will be written to currently selected data file
+        update_all_historical_all :
+            -load all available historical data available for
+            the all symbols for selected window timeframe
+            -data will be written to currently selected data file
         read_stored_data :
             -retrieve all (or subset) of locally-saved
             data into Dataset object
+        new_strategy :
+            returns Strategy object
+            -creates new Strategy object to use for housing
+            tasks needed for developing trading strategies
         """
 
         # ensure valid Gemini API keys in config file
@@ -174,7 +182,9 @@ class AlgorithmEnvironment(object):
     @dataset.setter
     def dataset(self, new_dataset):
         if new_dataset is None or \
-                isinstance(new_dataset, DataFrame):
+                isinstance(new_dataset, strategy.Dataset):
+            self.__dataset = new_dataset
+        elif isinstance(new_dataset, DataFrame):
             self.__dataset = strategy.Dataset(new_dataset)
         else:
             raise ValueError('Must be Pandas DataFrame object or None')

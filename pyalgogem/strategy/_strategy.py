@@ -31,8 +31,8 @@ class Strategy(object):
     @dataset.setter
     def dataset(self, new_dataset):
         if new_dataset is None or \
-                isinstance(new_dataset, DataFrame):
-            self.__dataset = Dataset(new_dataset)
+                isinstance(new_dataset, Dataset):
+            self.__dataset = new_dataset
         else:
             raise ValueError('Must be Pandas DataFrame object or None')
 
