@@ -7,7 +7,8 @@
 # Andrew Edmonds - 2018
 #
 
-from ._strategy import Dataset
+from pyalgogem.strategy import Dataset
+
 
 class IndicatorBase(object):
     """
@@ -23,15 +24,26 @@ class IndicatorBase(object):
 
     """
 
-    def __init__(self,dataset):
+    def __init__(self):
         """
         Creates container environment to create and backtest
         trading signal or predictor easily at the CLI
+        """
 
-        Parameters
-        ==========
-        dataset : Dataset
-            object to house dataset used for testing
+
+class IndicatorSMA(IndicatorBase):
+    """
+    SMA Indicator object
+
+    Parameters
+    ==========
+    dataset : Dataset
+        object to house dataset used for testing
+    """
+
+    def __init__(self, dataset, SMA1=None, SMA2=None):
+        """
+        Create SMA Indicator object
         """
         self.dataset = dataset
 
@@ -47,14 +59,3 @@ class IndicatorBase(object):
             self.__dataset = new_dataset
         else:
             raise ValueError('Must be Dataset object or None')
-
-
-class IndicatorSMA(IndicatorBase):
-    """
-    SMA Indicator object
-    """
-    def __init__(self, SMA1 = None, SMA2 = None):
-        """
-        Create SMA Indicator object
-        """
-        pass
