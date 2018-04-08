@@ -34,5 +34,17 @@ class Strategy(object):
                 isinstance(new_dataset, Dataset):
             self.__dataset = new_dataset
         else:
-            raise ValueError('Must be Pandas DataFrame object or None')
+            raise ValueError('Must be Dataset object or None')
 
+    @property
+    def signals(self):
+        """Object to house trading signals"""
+        return self.__signals
+
+    @signals.setter
+    def signals(self, new_signals):
+        if new_signals is None or \
+                isinstance(new_signals, DataFrame):
+            self.__signals = new_signals
+        else:
+            raise ValueError('Must be Pandas DataFrame object or None')

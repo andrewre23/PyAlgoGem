@@ -187,7 +187,7 @@ class AlgorithmEnvironment(object):
         elif isinstance(new_dataset, DataFrame):
             self.__dataset = strategy.Dataset(new_dataset)
         else:
-            raise ValueError('Must be Pandas DataFrame object or None')
+            raise ValueError('Must be Dataset object or None')
 
     @property
     def file(self):
