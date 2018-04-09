@@ -17,7 +17,8 @@ class IndicatorBase(object):
 
     Attributes
     ==========
-
+    dataset : Dataset
+        object to house dataset used for testing
 
     Methods
     =======
@@ -28,24 +29,10 @@ class IndicatorBase(object):
         """
         Creates container environment to create and backtest
         trading signal or predictor easily at the CLI
+
+        Parameters
+        ==========
         """
-
-
-class IndicatorSMA(IndicatorBase):
-    """
-    SMA Indicator object
-
-    Parameters
-    ==========
-    dataset : Dataset
-        object to house dataset used for testing
-    """
-
-    def __init__(self, dataset, SMA1=None, SMA2=None):
-        """
-        Create SMA Indicator object
-        """
-        self.dataset = dataset
 
     @property
     def dataset(self):
@@ -59,3 +46,15 @@ class IndicatorSMA(IndicatorBase):
             self.__dataset = new_dataset
         else:
             raise ValueError('Must be Dataset object or None')
+
+
+class IndicatorSMA(IndicatorBase):
+    """
+    SMA Indicator object
+    """
+
+    def __init__(self, dataset, SMA1=None, SMA2=None):
+        """
+        Create SMA Indicator object
+        """
+        self.dataset = dataset
