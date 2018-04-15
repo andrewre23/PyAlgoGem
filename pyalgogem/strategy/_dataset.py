@@ -65,22 +65,22 @@ class Dataset(object):
             raise ValueError('Must be Pandas DataFrame object')
 
     @property
-    def returns(self):
+    def sample(self):
         """Returns dataset from raw sample"""
-        return self.__returns
+        return self.__sample
 
-    @returns.setter
-    def returns(self, new_returns):
-        if new_returns is None or \
-                isinstance(new_returns, DataFrame):
-            self.__returns = new_returns
+    @sample.setter
+    def sample(self, new_sample):
+        if new_sample is None or \
+                isinstance(new_sample, DataFrame):
+            self.__sample = new_sample
         else:
             raise ValueError('Must be Pandas DataFrame object')
 
     def initialize_returns(self):
         """Resets sample data to match raw dataset"""
         if self.raw is None:
-            self.returns = None
+            self.sample = None
         else:
             data = self.raw.copy()
-            self.returns = DataFrame({'returns': log(data['close'] / data['close'].shift(1))})
+            self.sample = DataFrame({'close':data['close'],'returns': log(data['close'] / data['close'].shift(1))})
