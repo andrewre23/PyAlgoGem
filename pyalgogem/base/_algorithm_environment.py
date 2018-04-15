@@ -266,16 +266,23 @@ class AlgorithmEnvironment(object):
         if self.dataset is not None:
             print("Data has been loaded into 'dataset' object!")
 
-    def new_strategy(self):
+    def new_sma_indicator(self, sma1, sma2):
         """
-        Create a new strategy object
+        Create a new IndicatorSMA object
         to begin building your algorithm
+
+        Parameters
+        ==========
+        sma1 : int
+            first parameter for SMA strategy
+        sma2 : int
+            second parameter for SMA strategy
 
         Returns
         =======
-        return : strategy
-            Strategy object
+        return : IndicatorSMA
+            IndicatorSMA object
         """
         if self.dataset is None:
             self.read_stored_data()
-        return strategy.Strategy(self.dataset)
+        return strategy.IndicatorSMA(sma1, sma2, dataset=self.dataset, symbol = self.symbol)
