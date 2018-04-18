@@ -12,6 +12,7 @@ from pyalgogem.strategy import Dataset
 import numpy as np
 from pandas import DataFrame
 
+
 class IndicatorSMA(object):
     """
     Object for creating an SMA indicator with
@@ -111,7 +112,7 @@ class IndicatorSMA(object):
         """
         data = self.results.copy().dropna()
         data['position'] = np.where(data['SMA1'] > data['SMA2'], 1, -1)
-        data['strategy'] = data['position'].shift(1)*data['returns']
+        data['strategy'] = data['position'].shift(1) * data['returns']
         data['creturns'] = data['returns'].cumsum().apply(np.exp)
         data['cstrategy'] = data['strategy'].cumsum().apply(np.exp)
         self.results = data
@@ -119,7 +120,7 @@ class IndicatorSMA(object):
         aperf = data['cstrategy'].ix[-1]
         # out/under performance of indicator
         operf = aperf - data['creturns'].ix[-1]
-        return round(aperf,2), round(operf,2)
+        return round(aperf, 2), round(operf, 2)
 
     def plot_results(self):
         """
@@ -134,4 +135,4 @@ class IndicatorSMA(object):
         operf = aperf - self.results['creturns'].ix[-1]
         title = '%s | SMA1 = %d, SMA2 = %d | APerf = %d, OPerf = %d' % \
                 (self.symbol, self.sma1, self.sma2, aperf, operf)
-        self.results[['creturns','cstrategy']].plot(title=title,figsize=(10,6))
+        self.results[['creturns', 'cstrategy']].plot(title=title, figsize=(10, 6))

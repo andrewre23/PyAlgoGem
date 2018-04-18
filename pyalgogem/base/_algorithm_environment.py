@@ -285,4 +285,4 @@ class AlgorithmEnvironment(object):
         """
         if self.dataset is None:
             self.read_stored_data()
-        return strategy.IndicatorSMA(sma1, sma2, dataset=self.dataset, symbol = self.symbol)
+        return strategy.IndicatorSMA(sma1, sma2, dataset=self.dataset, symbol=self.symbol)

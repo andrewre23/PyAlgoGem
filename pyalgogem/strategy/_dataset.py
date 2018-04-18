@@ -83,4 +83,4 @@ class Dataset(object):
             self.sample = None
         else:
             data = self.raw.copy()
-            self.sample = DataFrame({'close':data['close'],'returns': log(data['close'] / data['close'].shift(1))})
+            self.sample = DataFrame({'close': data['close'], 'returns': log(data['close'] / data['close'].shift(1))})
