@@ -111,7 +111,7 @@ class IndicatorSMA(object):
         Run vectorized backtesting of strategy and generate various performance metrics
         """
         data = self.results.copy().dropna()
-        data['position'] = np.where(data['SMA1'] > data['SMA2'], 1, -1)
+        data['position'] = np.where(data['SMA1'] > data['SMA2'], 1, 0)
         data['strategy'] = data['position'].shift(1) * data['returns']
         data['creturns'] = data['returns'].cumsum().apply(np.exp)
         data['cstrategy'] = data['strategy'].cumsum().apply(np.exp)
