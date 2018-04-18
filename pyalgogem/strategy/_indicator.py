@@ -93,7 +93,7 @@ class IndicatorSMA(object):
 
     @sma2.setter
     def sma2(self, new_sma2):
-        if (isinstance(new_sma2, int) and \
+        if (isinstance(new_sma2, int) and
                 1 < new_sma2 < len(self.dataset.sample)):
             self.__sma2 = new_sma2
             self.results['SMA2'] = self.results['close'].rolling(self.sma2).mean()
