@@ -22,6 +22,8 @@ class IndicatorSMA(object):
     ==========
     dataset : Dataset
         object to house dataset used for testing
+    results : DataFrame
+        object to house results of strategy
     sma1 : int
         first parameter for SMA strategy
     sma2 : int
@@ -29,7 +31,12 @@ class IndicatorSMA(object):
 
     Methods
     =======
-
+    reset_results :
+        reset results DataFrame to equal dataset's sample DataFrame
+    execute_strategy :
+        recalculate results DataFrame based on current SMA parameters
+    plot_results :
+        plot results of strategy with current SMA parameters
     """
 
     def __init__(self, sma1, sma2, dataset, symbol):
@@ -116,19 +123,13 @@ class IndicatorSMA(object):
         data['creturns'] = data['returns'].cumsum().apply(np.exp)
         data['cstrategy'] = data['strategy'].cumsum().apply(np.exp)
         self.results = data
-        # absolute performance of indicator
-        aperf = data['cstrategy'].ix[-1]
-        # out/under performance of indicator
-        operf = aperf - data['creturns'].ix[-1]
-        return round(aperf, 2), round(operf, 2)
 
     def plot_results(self):
         """
         Plot cumulative performance of strategy vs underlying security
         """
         if self.results is None:
-            print('Error: please execute strategy before plotting')
-            return
+            self.execute_strategy()
         # absolute performance of indicator
         aperf = self.results['cstrategy'].ix[-1]
         # out/under performance of indicator
