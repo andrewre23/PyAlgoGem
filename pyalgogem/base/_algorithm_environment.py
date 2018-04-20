@@ -286,3 +286,22 @@ class AlgorithmEnvironment(object):
         if self.dataset is None:
             self.read_stored_data()
         return strategy.IndicatorSMA(sma1, sma2, dataset=self.dataset, symbol=self.symbol)
+
+    def new_mom_indicator(self, mom):
+        """
+        Create a new IndicatorMOM object
+        to begin building your algorithm
+
+        Parameters
+        ==========
+        mom : int
+            momentum parameter for MOM strategy
+
+        Returns
+        =======
+        return : IndicatorMOM
+            IndicatorMOM object
+        """
+        if self.dataset is None:
+            self.read_stored_data()
+        return strategy.IndicatorMOM(mom, dataset=self.dataset, symbol=self.symbol)
