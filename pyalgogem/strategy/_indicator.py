@@ -315,6 +315,6 @@ class IndicatorMOM(object):
         rangeMOM : tuple
             range of MOM parameter of the form (start, end, step size)
         """
-        opt = brute(self.update_and_run, (rangeMOM,(0,1,1)), finish=None)
+        opt = brute(self.update_and_run, (rangeMOM, (0, 1, 1)), finish=None)
         self.mom = int(opt[0])
         return opt, -self.update_and_run(opt)
