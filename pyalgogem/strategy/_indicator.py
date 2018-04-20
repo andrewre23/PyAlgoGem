@@ -285,13 +285,13 @@ class IndicatorMOM(object):
         aperf = self.results['cstrategy'].ix[-1]
         # out/under performance of indicator
         operf = aperf - self.results['creturns'].ix[-1]
-        title = '%s | SMA1 = %d, SMA2 = %d | APerf = %d, OPerf = %d' % \
-                (self.symbol, self.sma1, self.sma2, aperf, operf)
+        title = '%s | MOM = %d | APerf = %d, OPerf = %d' % \
+                (self.symbol, self.mom, aperf, operf)
         self.results[['creturns', 'cstrategy']].plot(title=title, figsize=(10, 6))
 
     def update_and_run(self, MOM):
         """
-        Updates SMA parameters and negative absolute performance
+        Updates MOM parameters and negative absolute performance
         for minimization algorithm
 
         Parameters
@@ -299,7 +299,10 @@ class IndicatorMOM(object):
         MOM : tuple
             MOM parameter
         """
-        self.mom = int(MOM)
+        if type(MOM) not in [int, float]:
+            self.mom = int(MOM[0])
+        else:
+            self.mom = int(MOM)
         self.reset_results()
         return -self.execute_strategy()[0]
 
@@ -312,6 +315,6 @@ class IndicatorMOM(object):
         rangeMOM : tuple
             range of MOM parameter of the form (start, end, step size)
         """
-        opt = brute(self.update_and_run, rangeMOM, finish=None)
+        opt = brute(self.update_and_run, (rangeMOM,(0,1,1)), finish=None)
         self.mom = int(opt[0])
         return opt, -self.update_and_run(opt)
