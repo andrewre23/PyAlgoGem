@@ -11,6 +11,7 @@ from pyalgogem.strategy import Dataset
 
 import numpy as np
 from pandas import DataFrame
+from scipy.optimize import brute
 
 
 class IndicatorSMA(object):
@@ -62,7 +63,7 @@ class IndicatorSMA(object):
         if new_dataset is None or \
                 isinstance(new_dataset, Dataset):
             self.__dataset = new_dataset
-            self.reset_results()
+            self.results = self.dataset.sample.copy()
         else:
             raise ValueError('Must be Dataset object or None')
 
@@ -86,10 +87,10 @@ class IndicatorSMA(object):
 
     @sma1.setter
     def sma1(self, new_sma1):
-        if (isinstance(new_sma1, int) and \
+        if (isinstance(new_sma1, int) and
                 1 < new_sma1 < len(self.dataset.sample)):
             self.__sma1 = new_sma1
-            self.results['SMA1'] = self.results['close'].rolling(self.sma1).mean()
+            self.results['SMA1'] = self.results['close'].rolling(new_sma1).mean()
         else:
             raise ValueError('SMA1 must be greater than 1 and less than the size of the data')
 
@@ -103,7 +104,7 @@ class IndicatorSMA(object):
         if (isinstance(new_sma2, int) and
                 1 < new_sma2 < len(self.dataset.sample)):
             self.__sma2 = new_sma2
-            self.results['SMA2'] = self.results['close'].rolling(self.sma2).mean()
+            self.results['SMA2'] = self.results['close'].rolling(new_sma2).mean()
         else:
             raise ValueError('SMA2 must be greater than 1 and less than the size of the data')
 
@@ -112,6 +113,9 @@ class IndicatorSMA(object):
         Reset results DataFrame
         """
         self.results = self.dataset.sample.copy()
+        if (self.sma1 and self.sma2):
+            self.results['SMA1'] = self.results['close'].rolling(self.sma1).mean()
+            self.results['SMA2'] = self.results['close'].rolling(self.sma2).mean()
 
     def execute_strategy(self):
         """
@@ -123,13 +127,17 @@ class IndicatorSMA(object):
         data['creturns'] = data['returns'].cumsum().apply(np.exp)
         data['cstrategy'] = data['strategy'].cumsum().apply(np.exp)
         self.results = data
+        # absolute performance of indicator
+        aperf = data['cstrategy'].ix[-1]
+        # out/under performance of indicator
+        operf = aperf - data['creturns'].ix[-1]
+        return round(aperf, 2), round(operf, 2)
 
     def plot_results(self):
         """
         Plot cumulative performance of strategy vs underlying security
         """
-        if self.results is None:
-            self.execute_strategy()
+        self.execute_strategy()
         # absolute performance of indicator
         aperf = self.results['cstrategy'].ix[-1]
         # out/under performance of indicator
@@ -137,3 +145,30 @@ class IndicatorSMA(object):
         title = '%s | SMA1 = %d, SMA2 = %d | APerf = %d, OPerf = %d' % \
                 (self.symbol, self.sma1, self.sma2, aperf, operf)
         self.results[['creturns', 'cstrategy']].plot(title=title, figsize=(10, 6))
+
+    def update_and_run(self, SMA):
+        """
+        Updates SMA parameters and negative absolute performance
+        for minimization algorithm
+
+        Parameters
+        ==========
+        SMA : tuple
+            SMA parameter tuple
+        """
+        self.sma1, self.sma2 = int(SMA[0]), int(SMA[1])
+        self.reset_results()
+        return -self.execute_strategy()[0]
+
+    def optimize_parameters(self, rangeSMA1, rangeSMA2):
+        """
+        Find global maximum given range of SMA parameters
+
+        Parameters
+        ==========
+        rangeSMA1, rangeSMA2 : tuple
+            range of SMA parameters of the form (start, end, step size)
+        """
+        opt = brute(self.update_and_run, (rangeSMA1, rangeSMA2), finish=None)
+        self.sma1, self.sma2 = int(opt[0]), int(opt[1])
+        return opt, -self.update_and_run(opt)
