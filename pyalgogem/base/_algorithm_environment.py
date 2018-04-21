@@ -261,6 +261,8 @@ class AlgorithmEnvironment(object):
         -Can select subset of timeseries as ts object
         """
         self.check_key_attributes()
+        if start or end:
+            all_data = False
         self.dataset = data.read_datafile(symbol=self.symbol, start=start, end=end,
                                           file=self.file, all_data=all_data)
         if self.dataset is not None:
