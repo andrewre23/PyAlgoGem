@@ -7,12 +7,22 @@
 # Andrew Edmonds - 2018
 #
 
+import datetime as dt
 
 from numpy import NaN
 from pandas import DataFrame
 from tstables import TsTable
 from datetime import date, datetime
 
+
+def convert_to_datetime(input_date):
+    """
+    Convert dt.date arguments to datetime
+    """
+    if type(input_date) == date:
+        input_date = dt.datetime(year=input_date.year,
+                           month=input_date.month,day=input_date.day)
+    return input_date
 
 def ensure_hdf5(name):
     """Ensure file is HDF5 file-type"""
