@@ -12,7 +12,7 @@ import tstables as ts
 
 from pandas import DataFrame
 
-from ._helper_functions import ensure_datetime, ensure_hdf5, get_minmax_timeseries
+from ._helper_functions import convert_to_datetime, ensure_datetime, ensure_hdf5, get_minmax_timeseries
 
 
 def append_to_datafile(symbol, data, file='data.h5'):
@@ -39,12 +39,14 @@ def read_datafile(symbol, start=None, end=None, file='data.h5', all_data=True):
     into in-memory DataFrame"""
     # ensure datetime parameters are valid
     # unless requesting all available data
+    start, end = convert_to_datetime(start), convert_to_datetime(end)
     if not all_data:
         if not (ensure_datetime(start) | ensure_datetime(end)):
             raise ValueError('Must pass valid datetime arguments')
         # ensure start is prior to end
-        if (start - end).total_seconds() >= 0:
-            raise ValueError('Start time must be prior to end time')
+        if start and end:
+            if (start - end).total_seconds() >= 0:
+                raise ValueError('Start time must be prior to end time')
     if symbol.upper() not in ['BTC', 'ETH']:
         raise ValueError('Symbol must be BTC or ETH')
     file = ensure_hdf5(str(file))
@@ -55,11 +57,12 @@ def read_datafile(symbol, start=None, end=None, file='data.h5', all_data=True):
                 tseries = f.root.BTC._f_get_timeseries()
             else:
                 tseries = f.root.ETH._f_get_timeseries()
-            if all_data:
-                start, end = get_minmax_daterange(symbol, file=file)
-            if start is None and end is None:
+            startmin, endmax = get_minmax_daterange(symbol, file=file)
+            if startmin is None and endmax is None:
                 print('No data found in {}'.format(file))
                 return
+            if start is None: start = startmin
+            if end is None: end = endmax
             dataset = tseries.read_range(start, end)
         return dataset
     except:
