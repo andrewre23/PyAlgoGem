@@ -307,3 +307,24 @@ class AlgorithmEnvironment(object):
         if self.dataset is None:
             self.read_stored_data()
         return strategy.IndicatorMOM(mom, dataset=self.dataset, symbol=self.symbol)
+
+    def new_mr_indicator(self, sma, threshold):
+        """
+        Create a new IndicatorMR object
+        to begin building your algorithm
+
+        Parameters
+        ==========
+        sma : int
+            momentum parameter for MR strategy
+        threshold : float
+            threshold parameter for MR strategy
+
+        Returns
+        =======
+        return : IndicatorMR
+            IndicatorMR object
+        """
+        if self.dataset is None:
+            self.read_stored_data()
+        return strategy.IndicatorMR(sma, threshold, dataset=self.dataset, symbol=self.symbol)
