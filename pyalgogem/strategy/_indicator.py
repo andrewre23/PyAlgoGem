@@ -318,3 +318,171 @@ class IndicatorMOM(object):
         opt = brute(self.update_and_run, (rangeMOM, (0, 1, 1)), finish=None)
         self.mom = int(opt[0])
         return opt, -self.update_and_run(opt)
+
+
+class IndicatorMR(object):
+    """
+    Object for creating a Mean-Reversion indicator with
+    1 parameter, SMA
+
+    Attributes
+    ==========
+    dataset : Dataset
+        object to house dataset used for testing
+    results : DataFrame
+        object to house results of strategy
+    sma : int
+        moving-average parameter for strategy
+
+    Methods
+    =======
+    reset_results :
+        reset results DataFrame to equal dataset's sample DataFrame
+    execute_strategy :
+        recalculate results DataFrame based on current SMA parameters
+    plot_results :
+        plot results of strategy with current SMA parameters
+    """
+
+    def __init__(self, sma, threshold, dataset, symbol):
+        """
+        Creates container environment to create and backtest
+        trading signal or predictor easily at the CLI
+
+        Parameters
+        ==========
+        """
+        self.dataset = dataset
+        self.sma = sma
+        self.threshold = threshold
+        self.symbol = symbol
+
+    @property
+    def dataset(self):
+        """Object to house raw and sampled data"""
+        return self.__dataset
+
+    @dataset.setter
+    def dataset(self, new_dataset):
+        if new_dataset is None or \
+                isinstance(new_dataset, Dataset):
+            self.__dataset = new_dataset
+            self.results = self.dataset.sample.copy()
+        else:
+            raise ValueError('Must be Dataset object or None')
+
+    @property
+    def results(self):
+        """Object to house results of strategy"""
+        return self.__results
+
+    @results.setter
+    def results(self, new_results):
+        if new_results is None or \
+                isinstance(new_results, DataFrame):
+            self.__results = new_results
+        else:
+            raise ValueError('Must be DataFrame object or None')
+
+    @property
+    def sma(self):
+        """SMA parameter"""
+        return self.__sma
+
+    @sma.setter
+    def sma(self, new_sma):
+        if (isinstance(new_sma, int) and
+                1 < new_sma < len(self.dataset.sample)):
+            self.__sma = new_sma
+        else:
+            raise ValueError('SMA must be greater than 1 and less than the size of the data')
+
+    @property
+    def threshold(self):
+        """Threshold parameter"""
+        return self.__threshold
+
+    @threshold.setter
+    def threshold(self, new_threshold):
+        if ((isinstance(new_threshold, int) or isinstance(new_threshold, float)) and
+                0 < new_threshold < 100):
+            self.__threshold = new_threshold
+        else:
+            raise ValueError('Threshold must be greater than 0 and less than 100')
+
+    def reset_results(self):
+        """
+        Reset results DataFrame
+        """
+        self.results = self.dataset.sample.copy()
+
+    def execute_strategy(self):
+        """
+        Run vectorized backtesting of strategy and generate various performance metrics
+        """
+        data = self.results.copy().dropna()
+        data['sma'] = data['returns'].rolling(self.sma).mean()
+        data['distance'] = data['close'] - data['sma']
+        # sell signals
+        data['position'] = np.where(data['distance'] > self.threshold, -1, np.nan)
+        # buy signals
+        data['position'] = np.where(data['distance'] < -self.threshold, 1, data['position'])
+        # cross of current price and SMA (zero distance)
+        data['position'] = np.where(data['distance'] * data['distance'].shift(1) < 0, 0, data['position'])
+        data['position'] = data['position'].ffill().fillna(0)
+        data['strategy'] = data['position'].shift(1) * data['returns']
+        # determine when trades take place
+        # trades = data['position'].diff().fillna(0) != 0
+        # subtract transaction costs from return where trades take place
+        # data['strategy'][trades] -= self.tc
+        data['creturns'] = data['returns'].cumsum().apply(np.exp)
+        data['cstrategy'] = data['strategy'].cumsum().apply(np.exp)
+        self.results = data
+        # absolute performance of indicator
+        aperf = data['cstrategy'].ix[-1]
+        # out/under performance of indicator
+        operf = aperf - data['creturns'].ix[-1]
+        return round(aperf, 2), round(operf, 2)
+
+    def plot_results(self):
+        """
+        Plot cumulative performance of strategy vs underlying security
+        """
+        self.execute_strategy()
+        # absolute performance of indicator
+        aperf = self.results['cstrategy'].ix[-1]
+        # out/under performance of indicator
+        operf = aperf - self.results['creturns'].ix[-1]
+        title = '%s | SMA = %d THRSH = %d | APerf = %d, OPerf = %d' % \
+                (self.symbol, self.sma, self.threshold, aperf, operf)
+        self.results[['creturns', 'cstrategy']].plot(title=title, figsize=(10, 6))
+
+    def update_and_run(self, SMAthreshold):
+        """
+        Updates MOM parameters and negative absolute performance
+        for minimization algorithm
+
+        Parameters
+        ==========
+        SMA : tuple
+            SMA parameter, threshold parameter
+        """
+        self.SMA, self.threshold = SMAthreshold[0], SMAthreshold[1]
+        self.reset_results()
+        return -self.execute_strategy()[0]
+
+    def optimize_parameters(self, rangeMR, rangeThreshold):
+        """
+        Find global maximum given range of MOM parameters
+
+        Parameters
+        ==========
+        rangeMR : tuple
+            range of MR parameter of the form (start, end, step size)
+        rangeThreshold : tuple
+            range of MOM parameter of the form (start, end, step size)
+        """
+        opt = brute(self.update_and_run, (rangeMR, rangeThreshold), finish=None)
+        self.sma = int(opt[0])
+        self.threshold = opt[1]
+        return opt, -self.update_and_run(opt)

@@ -8,4 +8,4 @@
 #
 
 from ._dataset import Dataset
-from ._indicator import IndicatorSMA, IndicatorMOM
+from ._indicator import IndicatorSMA, IndicatorMOM, IndicatorMR
